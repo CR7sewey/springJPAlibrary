@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: springJPAlibrary
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        format-sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+      show-sql: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/library
+    username: postgres
+    password:
+
+
+
+server:
+  port: 8080
