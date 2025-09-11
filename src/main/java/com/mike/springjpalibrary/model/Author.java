@@ -1,35 +1,48 @@
 package com.mike.springjpalibrary.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "tb_author", schema = "public")
+@Getter // get and set created on compile time - lombok
+@Setter
 public class Author implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @Column(name = "nome", nullable = false, length = 200)
     private String nome;
     @Column(name = "birth_date")
-    private Date birthDate;
+    private LocalDate birthDate;
+    @Column(name = "nationality", nullable = false, length = 50)
     private String nationality;
 
+    @OneToMany(mappedBy = "author") // 1 author can have several books - mapping
+    private List<Book> books = new ArrayList<>();
+
+    @Deprecated
     public Author() {}
 
-    public Author(UUID id, String nome, Date birthDate, String nationality) {
+    public Author(UUID id, String nome, LocalDate birthDate, String nationality) {
         this.id = id;
         this.nome = nome;
         this.birthDate = birthDate;
         this.nationality = nationality;
     }
 
-    public UUID getId() {
+   /* public UUID getId() {
         return id;
     }
 
@@ -53,13 +66,13 @@ public class Author implements Serializable {
         this.nationality = nationality;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
-    }
+    }*/
 
     @Override
     public String toString() {

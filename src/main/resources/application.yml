@@ -4,7 +4,7 @@ spring:
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: update # create-drop, none, create
 
     properties:
       hibernate:

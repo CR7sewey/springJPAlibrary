@@ -1,33 +1,35 @@
 package com.mike.springjpalibrary.service;
 
 import com.mike.springjpalibrary.model.Author;
-import com.mike.springjpalibrary.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
 @Service
-public class AuthorService implements IService<Author> {
+public class AuthorService {
 
-
-    private AuthorRepository repo;
+/*
+    private AuthorRepository authorRepository;
 
     @Autowired
-    public AuthorService(AuthorRepository repo) {
-        this.repo = repo;
+    public AuthorService(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
     }
 
 
     @Override
-    public Author findById(UUID id) {
-        return repo.findById(id).orElse(null);
+    public Author findById(UUID id) throws SQLException {
+        return authorRepository.findById(id).orElse(null);
     }
 
     @Override
     public List<Author> findAll() {
-        List<Author> authors = repo.findAll();
-        return authors;
+        return List.of(new Author());
     }
+    */
+
 }
