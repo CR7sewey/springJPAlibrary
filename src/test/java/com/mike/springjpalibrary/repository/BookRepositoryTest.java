@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,6 +86,25 @@ class BookRepositoryTest {
         assertNotNull(book);
         System.out.println(book.getAuthor().getNome());
 
+    }
+
+
+    @Test
+    void findBookTitulo() {
+        List<Book> books = bookRepository.findByTitulo("Titulo do Book");
+        books.forEach(System.out::println);
+    }
+
+    @Test
+    void findBookISBN() {
+        Book books = bookRepository.findByIsbn("2134q532523");
+        System.out.println(books);
+    }
+
+    @Test
+    void findBookPreco() {
+        List<Book> books = bookRepository.findByTituloAndPreco("Titulo do Book", BigDecimal.valueOf(12));
+        books.forEach(System.out::println);
     }
 
 }

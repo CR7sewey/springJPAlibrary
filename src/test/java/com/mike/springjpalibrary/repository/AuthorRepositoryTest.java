@@ -6,6 +6,7 @@ import com.mike.springjpalibrary.model.Genero;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -96,5 +97,18 @@ public class AuthorRepositoryTest {
         //bookRepository.saveAll(author.getBooks()); // not needed bcs cascade
 
 
+    }
+
+
+    @Test
+    @Transactional // transacao aberta para fazer o select da propriedade lazy (livros)
+    public void authorBooks() {
+        /*
+        authorRepository.findById(UUID.fromString("439191d4-b9ef-45a0-9d57-bc85a8607ab6"))
+                .ifPresent(author -> author.getBooks().forEach(System.out::println));
+
+         */
+        var author = authorRepository.findById(UUID.fromString("439191d4-b9ef-45a0-9d57-bc85a8607ab6")).orElse(null);
+        bookRepository.findByAuthor(author).forEach(System.out::println);
     }
 }

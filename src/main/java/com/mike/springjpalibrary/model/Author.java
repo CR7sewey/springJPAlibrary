@@ -29,7 +29,7 @@ public class Author implements Serializable {
     @Column(name = "nationality", nullable = false, length = 50)
     private String nationality;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL) // 1 author can have several books - mapping
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY) // 1 author can have several books - mapping; lazy is default
     //@Transient
     private List<Book> books = new ArrayList<>();
 

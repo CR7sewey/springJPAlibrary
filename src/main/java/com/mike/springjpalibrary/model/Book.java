@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "tb_book")
 @Data // get and setter and others (ToString, equals and hascode nad RequiredArgsConstructor)
+@ToString(exclude = "author")
 public class Book implements Serializable {
 
     @Id
