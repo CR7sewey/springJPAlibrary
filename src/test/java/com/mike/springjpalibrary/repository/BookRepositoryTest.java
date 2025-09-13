@@ -6,6 +6,7 @@ import com.mike.springjpalibrary.model.Genero;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -71,6 +72,18 @@ class BookRepositoryTest {
             book.setAuthor(authorRepository.findById(idAuthor).orElse(null));
             bookRepository.save(book);
         }
+
+    }
+
+    @Test
+    @Transactional // direct connection with db, only closes after the method ends - bcs lazy, is useful to have this
+    void getBook() {
+        var id = UUID.fromString("c5294463-70df-49d7-b1ad-4435726435a5");
+        var book = bookRepository.findById(id).orElse(null);
+        System.out.println(book);
+
+        assertNotNull(book);
+        System.out.println(book.getAuthor().getNome());
 
     }
 
