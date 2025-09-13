@@ -37,7 +37,7 @@ public class Book implements Serializable {
     @Column(precision = 20, scale = 2)
     private BigDecimal preco;
 
-    @ManyToOne // 1 author can have mutliple book - current table
+    @ManyToOne(cascade = CascadeType.ALL) // 1 author can have mutliple book - current table
     @JoinColumn(name = "id_author")
     private Author author;
 

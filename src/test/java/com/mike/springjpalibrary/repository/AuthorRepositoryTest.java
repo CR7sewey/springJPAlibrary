@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
@@ -51,5 +52,12 @@ public class AuthorRepositoryTest {
         else  {
             System.out.println("Author not found");
         }
+    }
+
+    @Test
+    public void findFirst10() {
+        List<Author> authors = authorRepository.findAll();
+        var printableList = authors.subList(1, Math.min(authors.size(), 10));
+        printableList.forEach(System.out::println);
     }
 }
