@@ -107,4 +107,15 @@ class BookRepositoryTest {
         books.forEach(System.out::println);
     }
 
+    @Test
+    void mostrarLivrosQuery() {
+        List<Book> books = bookRepository.mostrarTodosOsLivros();
+        books.forEach(System.out::println);
+    }
+
+    @Test
+    void deleteBookGenero() {
+        bookRepository.deleteByGenero(Genero.FANTASIA);
+    }
+
 }
