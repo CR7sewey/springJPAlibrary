@@ -3,9 +3,15 @@ package com.mike.springjpalibrary.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +21,7 @@ import java.util.UUID;
 @Table(name = "tb_author", schema = "public")
 @Getter // get and set created on compile time - lombok
 @Setter
+@EntityListeners(AuditingEntityListener.class) // listening for some anotations (created etc)
 public class Author implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -28,6 +35,24 @@ public class Author implements Serializable {
     private LocalDate birthDate;
     @Column(name = "nationality", nullable = false, length = 50)
     private String nationality;
+
+    @CreatedDate
+    @Column(name = "register_date")
+    private LocalDateTime registerDate;
+
+    @LastModifiedDate
+    @Column(name = "last_update_date")
+    private LocalDateTime lastUpdateDate;
+
+    //@CreatedBy
+    @Column(name = "id_user")
+    private UUID idUser;
+
+    /**
+     * Data Cadastro
+     * Data Ultima Atualização
+     * Usuário Ultima Atualização
+     */
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY) // 1 author can have several books - mapping; lazy is default
     //@Transient

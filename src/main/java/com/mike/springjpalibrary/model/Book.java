@@ -5,10 +5,16 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +23,7 @@ import java.util.UUID;
 @Table(name = "tb_book")
 @Data // get and setter and others (ToString, equals and hascode nad RequiredArgsConstructor)
 @ToString(exclude = "author")
+@EntityListeners(AuditingEntityListener.class)
 public class Book implements Serializable {
 
     @Id
@@ -38,6 +45,18 @@ public class Book implements Serializable {
 
     @Column(precision = 20, scale = 2)
     private BigDecimal preco;
+
+    @CreatedDate
+    @Column(name = "register_date")
+    private LocalDateTime registerDate;
+
+    @LastModifiedDate
+    @Column(name = "last_update_date")
+    private LocalDateTime lastUpdateDate;
+
+    //@CreatedBy
+    @Column(name = "id_user")
+    private UUID idUser;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY) // 1 author can have mutliple book - current table; fetch is EAGER by default
     @JoinColumn(name = "id_author")
