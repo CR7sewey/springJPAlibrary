@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/authors")
@@ -42,6 +46,57 @@ public class AuthorController
         }
 
     }
+
+    @GetMapping
+    public ResponseEntity<List<AuthorDTO>> findAll()
+    {
+        var authors = authorService.findAll();
+        List<AuthorDTO> authorDTOs = new ArrayList<>();
+        authors.stream().map(aut -> new AuthorDTO(
+                aut.getId(),
+                aut.getNome(),
+                aut.getBirthDate(),
+                aut.getNationality()
+        )).forEach(authorDTOs::add);
+        return ResponseEntity.ok(authorDTOs);
+
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AuthorDTO> findById(@PathVariable String id)
+    {
+        var uuid = UUID.fromString(id);
+        Optional<Author> author = authorService.findById(uuid);
+        if (author.isPresent()) {
+            AuthorDTO authorDTO = new AuthorDTO(
+                    author.get().getId(),
+                    author.get().getNome(),
+                    author.get().getBirthDate(),
+                    author.get().getNationality()
+            );
+            return ResponseEntity.ok().body(authorDTO);
+        }
+        return ResponseEntity.notFound().build();
+
+    }
+
+    // idempotente - mesmo retorno independentemente da repsota (not cool)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable String id)
+    {
+        var uuid = UUID.fromString(id);
+        Optional<Author> author = authorService.findById(uuid);
+        if (author.isEmpty()) {
+            return ResponseEntity.notFound().build();
+
+        }
+
+            authorService.delete(author.get());
+            return ResponseEntity.noContent().build();
+
+
+    }
+
 
 
 

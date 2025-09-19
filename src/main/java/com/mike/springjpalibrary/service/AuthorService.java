@@ -5,6 +5,10 @@ import com.mike.springjpalibrary.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 public class AuthorService implements IService<Author> {
 
@@ -18,6 +22,26 @@ public class AuthorService implements IService<Author> {
     @Override
     public Author save(Author author){
             return authorRepository.save(author);
+    }
+
+    @Override
+    public Optional<Author> findById(UUID id) {
+        return authorRepository.findById(id);
+    }
+
+    @Override
+    public List<Author> findAll() {
+        return authorRepository.findAll();
+    }
+
+    @Override
+    public void delete(Author author) {
+        authorRepository.delete(author);
+    }
+
+    @Override
+    public Author update(Author author) {
+        return null;
     }
 
 
