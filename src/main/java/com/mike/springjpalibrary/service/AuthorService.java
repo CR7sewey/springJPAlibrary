@@ -44,5 +44,22 @@ public class AuthorService implements IService<Author> {
         return null;
     }
 
+    @Override
+    public List<Author> findByNameAndNationality(String name, String nationality) {
+        if(name == null && nationality == null) {
+            return authorRepository.findAll();
+        }
+
+        if (name == null) {
+            return authorRepository.findByNationality(nationality);
+        }
+
+        if(nationality == null) {
+            return authorRepository.findByNome(name);
+        }
+
+        return authorRepository.findByNomeAndNationality(name, nationality);
+    }
+
 
 }

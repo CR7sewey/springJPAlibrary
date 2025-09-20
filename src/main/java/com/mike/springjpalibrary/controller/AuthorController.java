@@ -46,7 +46,7 @@ public class AuthorController
         }
 
     }
-
+/*
     @GetMapping
     public ResponseEntity<List<AuthorDTO>> findAll()
     {
@@ -60,7 +60,7 @@ public class AuthorController
         )).forEach(authorDTOs::add);
         return ResponseEntity.ok(authorDTOs);
 
-    }
+    }*/
 
     @GetMapping("/{id}")
     public ResponseEntity<AuthorDTO> findById(@PathVariable String id)
@@ -97,6 +97,19 @@ public class AuthorController
 
     }
 
+    @GetMapping
+    public ResponseEntity<List<AuthorDTO>> findByNameOrNationality(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "nationality", required = false) String nationality)
+    {
+        var authors = authorService.findByNameAndNationality(name, nationality);
+        List<AuthorDTO> authorDTOs = new ArrayList<>();
+        authors.stream().map(aut -> new AuthorDTO(
+                aut.getId(),
+                aut.getNome(),
+                aut.getBirthDate(),
+                aut.getNationality()
+        )).forEach(authorDTOs::add);
+        return ResponseEntity.ok(authorDTOs);
+    }
 
 
 
