@@ -16,18 +16,12 @@ import java.util.UUID;
 
 //@RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Service
+@RequiredArgsConstructor//(onConstructor = @__(@Autowired))
 public class AuthorService implements IService<Author> {
 
     private final AuthorRepository authorRepository;
     private final AuthorValidator authorValidator;
     private final BookRepository bookRepository;
-
-    @Autowired
-    public AuthorService(AuthorRepository authorRepository, AuthorValidator authorValidator, BookRepository bookRepository) { // bean gerenciado (repository)
-        this.authorRepository = authorRepository;
-        this.authorValidator = authorValidator;
-        this.bookRepository = bookRepository;
-    }
 
     @Override
     public Author save(Author author){

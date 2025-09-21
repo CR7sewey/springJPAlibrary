@@ -24,6 +24,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/authors")
+//@RequiredArgsConstructor - dependency injection without constructor set by us
 public class AuthorController
 {
     private AuthorService authorService;
