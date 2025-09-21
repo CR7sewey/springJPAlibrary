@@ -1,7 +1,11 @@
 package com.mike.springjpalibrary.controller;
 
+import com.mike.springjpalibrary.exceptions.DuplicateRegister;
+import com.mike.springjpalibrary.exceptions.FieldsValidator;
+import com.mike.springjpalibrary.exceptions.OperationNotAllowed;
 import com.mike.springjpalibrary.model.Author;
 import com.mike.springjpalibrary.model.dto.AuthorDTO;
+import com.mike.springjpalibrary.model.dto.ResponseErrorDTO;
 import com.mike.springjpalibrary.repository.AuthorRepository;
 import com.mike.springjpalibrary.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +35,7 @@ public class AuthorController
     }
 
     @PostMapping
-    public ResponseEntity<Void> saveAuthor(@RequestBody AuthorDTO authorDTO)
+    public ResponseEntity<Object> saveAuthor(@RequestBody AuthorDTO authorDTO)
     {
         try {
             // Author - camada de persitencia; AuthorDTo - view
@@ -41,8 +46,16 @@ public class AuthorController
             return ResponseEntity.status(HttpStatus.CREATED).location(uri).build();
 
         }
-        catch (Exception ex) {
-            return ResponseEntity.badRequest().build();
+        catch (DuplicateRegister ex) {
+            var error = ResponseErrorDTO.conflictResponseErrorDTO(ex.getMessage());
+            return ResponseEntity.status(error.status()).body(error);
+        }
+        catch (FieldsValidator ex) {
+            var error = ResponseErrorDTO.unprocessableEntity(ex.getMessage(), ex.getFieldErrors());
+            return ResponseEntity.status(error.status()).body(error);
+        } catch (Exception e) {
+            var error = ResponseErrorDTO.standardResponseErrorDTO(e.getMessage());
+            return ResponseEntity.status(error.status()).body(error);
         }
 
     }
@@ -82,25 +95,35 @@ public class AuthorController
 
     // idempotente - mesmo retorno independentemente da repsota (not cool)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable String id)
+    public ResponseEntity<Object> deleteById(@PathVariable String id)
     {
-        var uuid = UUID.fromString(id);
-        Optional<Author> author = authorService.findById(uuid);
-        if (author.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        try {
+            var uuid = UUID.fromString(id);
+            Optional<Author> author = authorService.findById(uuid);
+            if (author.isEmpty()) {
+                return ResponseEntity.notFound().build();
 
-        }
+            }
 
             authorService.delete(author.get());
             return ResponseEntity.noContent().build();
-
+        }
+        catch (OperationNotAllowed ex) {
+            var error = ResponseErrorDTO.operationNotAllowed(ex.getMessage());
+            return ResponseEntity.status(error.status()).body(error);
+        }
+        catch (Exception ex) {
+            var error = ResponseErrorDTO.standardResponseErrorDTO(ex.getMessage());
+            System.out.println(ex.getMessage());
+            return ResponseEntity.status(error.status()).body(error);
+        }
 
     }
 
     @GetMapping
-    public ResponseEntity<List<AuthorDTO>> findByNameOrNationality(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "nationality", required = false) String nationality)
+    public ResponseEntity<List<AuthorDTO>> findByNameOrNationality(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "birthDate", required = false) LocalDate birthDate, @RequestParam(value = "nationality", required = false) String nationality)
     {
-        var authors = authorService.findByNameAndNationality(name, nationality);
+        var authors = authorService.findByNameAndBirthDateAndNationality(name, birthDate, nationality);
         List<AuthorDTO> authorDTOs = new ArrayList<>();
         authors.stream().map(aut -> new AuthorDTO(
                 aut.getId(),
@@ -108,7 +131,49 @@ public class AuthorController
                 aut.getBirthDate(),
                 aut.getNationality()
         )).forEach(authorDTOs::add);
+
+       /* AuthorDTO authorDTO = new AuthorDTO(
+                authors.get().getId(),
+                authors.get().getNome(),
+                authors.get().getBirthDate(),
+                authors.get().getNationality()
+        );*/
         return ResponseEntity.ok(authorDTOs);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateAuthor(@PathVariable String id, @RequestBody AuthorDTO authorDTO)
+    {
+        try {
+            var uuid = UUID.fromString(id);
+            Optional<Author> author = authorService.findById(uuid);
+            if (author.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            // automatically updated bcs entity state is managed ?
+            author.get().setNome(authorDTO.nome());
+            author.get().setBirthDate(authorDTO.birthDate());
+            author.get().setNationality(authorDTO.nationality());
+            System.out.println(author.get());
+            authorService.update(author.get());
+            return ResponseEntity.noContent().build(); // 204
+        }
+        catch (FieldsValidator ex) {
+            var error = ResponseErrorDTO.unprocessableEntity(ex.getMessage(), ex.getFieldErrors());
+            return ResponseEntity.status(error.status()).body(error);
+        }
+        catch (DuplicateRegister ex) {
+            var error = ResponseErrorDTO.conflictResponseErrorDTO(ex.getMessage());
+            return ResponseEntity.status(error.status()).body(error);
+        }
+        catch (Exception ex) {
+            var error = ResponseErrorDTO.standardResponseErrorDTO(ex.getMessage());
+            System.out.println(ex.getMessage());
+            return ResponseEntity.status(error.status()).body(error);
+        }
+
+
+
     }
 
 
