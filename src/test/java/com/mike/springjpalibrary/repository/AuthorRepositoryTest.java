@@ -55,7 +55,7 @@ public class AuthorRepositoryTest {
 
         var author = authorRepository.findByNome("MiguelDelete");
         if (author != null) {
-            authorRepository.delete(author);
+            authorRepository.delete(author.get(0));
         }
         else  {
             System.out.println("Author not found");

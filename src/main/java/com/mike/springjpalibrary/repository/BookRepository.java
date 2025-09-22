@@ -17,6 +17,7 @@ import java.util.UUID;
 public interface BookRepository extends JpaRepository<Book, UUID> {
     // https://www.google.com/search?q=jpa+query+methods+spring&rlz=1C1ONGR_pt-PTPT1162PT1164&oq=jpa+query+methods+spring&gs_lcrp=EgZjaHJvbWUyCwgAEEUYHhg5GKkGMgkIARAAGB4YqQYyCQgCEAAYHhipBjIICAMQABgWGB4yCAgEEAAYFhgeMggIBRAAGBYYHjIICAYQABgWGB4yCAgHEAAYFhgeMggICBAAGBYYHjIKCAkQABiABBiiBNIBCDc1NjBqMGo0qAIAsAIB&sourceid=chrome&ie=UTF-8
     List<Book> findByAuthor(Author author);
+    boolean existsByAuthor(Author author);
     List<Book> findByTitulo(String Titulo);
     Book findByIsbn(String Isbn);
     List<Book> findByTituloAndPreco(String Title, BigDecimal preco);
