@@ -59,7 +59,7 @@ public class AuthorValidator {
         }
         return !author.getId().equals(exists.getFirst().getId());
     }
-
+    // not needed bcs of validator dependency and annotations
     public boolean validateFieldRegister(Author author) {
         fieldErrors.clear();
         boolean returnValue = false;

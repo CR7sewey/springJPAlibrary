@@ -8,10 +8,13 @@ import com.mike.springjpalibrary.model.dto.AuthorDTO;
 import com.mike.springjpalibrary.model.dto.ResponseErrorDTO;
 import com.mike.springjpalibrary.repository.AuthorRepository;
 import com.mike.springjpalibrary.service.AuthorService;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/authors")
 //@RequiredArgsConstructor - dependency injection without constructor set by us
@@ -36,7 +40,7 @@ public class AuthorController
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveAuthor(@RequestBody AuthorDTO authorDTO)
+    public ResponseEntity<Object> saveAuthor(@RequestBody @Valid AuthorDTO authorDTO)
     {
         try {
             // Author - camada de persitencia; AuthorDTo - view
@@ -51,13 +55,10 @@ public class AuthorController
             var error = ResponseErrorDTO.conflictResponseErrorDTO(ex.getMessage());
             return ResponseEntity.status(error.status()).body(error);
         }
-        catch (FieldsValidator ex) {
+        /*catch (FieldsValidator ex) {
             var error = ResponseErrorDTO.unprocessableEntity(ex.getMessage(), ex.getFieldErrors());
             return ResponseEntity.status(error.status()).body(error);
-        } catch (Exception e) {
-            var error = ResponseErrorDTO.standardResponseErrorDTO(e.getMessage());
-            return ResponseEntity.status(error.status()).body(error);
-        }
+        } */
 
     }
 /*
@@ -124,7 +125,7 @@ public class AuthorController
     @GetMapping
     public ResponseEntity<List<AuthorDTO>> findByNameOrNationality(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "birthDate", required = false) LocalDate birthDate, @RequestParam(value = "nationality", required = false) String nationality)
     {
-        var authors = authorService.findByNameAndBirthDateAndNationality(name, birthDate, nationality);
+        var authors = authorService.findByExample(name, birthDate, nationality);
         List<AuthorDTO> authorDTOs = new ArrayList<>();
         authors.stream().map(aut -> new AuthorDTO(
                 aut.getId(),
@@ -143,7 +144,7 @@ public class AuthorController
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateAuthor(@PathVariable String id, @RequestBody AuthorDTO authorDTO)
+    public ResponseEntity<Object> updateAuthor(@PathVariable String id, @RequestBody @Valid AuthorDTO authorDTO)
     {
         try {
             var uuid = UUID.fromString(id);
@@ -159,10 +160,10 @@ public class AuthorController
             authorService.update(author.get());
             return ResponseEntity.noContent().build(); // 204
         }
-        catch (FieldsValidator ex) {
+        /*catch (FieldsValidator ex) {
             var error = ResponseErrorDTO.unprocessableEntity(ex.getMessage(), ex.getFieldErrors());
             return ResponseEntity.status(error.status()).body(error);
-        }
+        }*/
         catch (DuplicateRegister ex) {
             var error = ResponseErrorDTO.conflictResponseErrorDTO(ex.getMessage());
             return ResponseEntity.status(error.status()).body(error);

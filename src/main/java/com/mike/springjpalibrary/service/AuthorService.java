@@ -7,6 +7,8 @@ import com.mike.springjpalibrary.repository.BookRepository;
 import com.mike.springjpalibrary.validator.AuthorValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -86,6 +88,21 @@ public class AuthorService implements IService<Author> {
 
         return authorRepository.findByNomeAndBirthDateAndNationality(name, birthDate, nationality);
     }
+
+    public List<Author> findByExample(String name, LocalDate birthDate, String nationality) {
+        Author author = new Author();
+        author.setNome(name);
+        author.setBirthDate(birthDate);
+        author.setNationality(nationality);
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnoreNullValues()
+                .withIgnoreCase() // case insensitive
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING); // contains any part of the string
+
+        Example<Author> authorExample = Example.of(author, matcher);
+        return authorRepository.findAll(authorExample);
+    }
+
 
     public boolean authorHasBook(Author author) {
         return bookRepository.existsByAuthor(author);
