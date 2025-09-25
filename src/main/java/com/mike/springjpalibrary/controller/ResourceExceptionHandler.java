@@ -1,9 +1,12 @@
 package com.mike.springjpalibrary.controller;
 
+import com.mike.springjpalibrary.exceptions.DuplicateRegister;
+import com.mike.springjpalibrary.exceptions.OperationNotAllowed;
 import com.mike.springjpalibrary.model.dto.FieldErrorDTO;
 import com.mike.springjpalibrary.model.dto.ResponseErrorDTO;
 import com.mike.springjpalibrary.validator.AuthorValidator;
 import jakarta.servlet.http.HttpServletRequest;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,8 +40,32 @@ public class ResourceExceptionHandler {
                         fe.getField(),
                         fe.getDefaultMessage()
                 )
-                ).collect(Collectors.toList());
+        ).collect(Collectors.toList());
         ResponseErrorDTO errorDTO = ResponseErrorDTO.unprocessableEntity("Validation failed", fieldErrorDTOs);
+        return ResponseEntity.status(errorDTO.status()).body(errorDTO);
+    }
+
+    @ExceptionHandler(DuplicateRegister.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<Object> handleDuplicateRegister(DuplicateRegister e, HttpServletRequest request){
+        System.out.println("AQUUUUUUUUUUUUUUUUUUUUUi");
+        ResponseErrorDTO errorDTO = ResponseErrorDTO.conflictResponseErrorDTO(e.getMessage());
+        return ResponseEntity.status(errorDTO.status()).body(errorDTO);
+    }
+
+    @ExceptionHandler(OperationNotAllowed.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleOperationNotAllowed(DuplicateRegister e, HttpServletRequest request){
+        System.out.println("AQUUUUUUUUUUUUUUUUUUUUUi 2");
+        ResponseErrorDTO errorDTO = ResponseErrorDTO.operationNotAllowed(e.getMessage());
+        return ResponseEntity.status(errorDTO.status()).body(errorDTO);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<Object> handleRunTimeException(DuplicateRegister e, HttpServletRequest request){
+        System.out.println("AQUUUUUUUUUUUUUUUUUUUUUi 2");
+        ResponseErrorDTO errorDTO = ResponseErrorDTO.standardResponseErrorDTO(e.getMessage());
         return ResponseEntity.status(errorDTO.status()).body(errorDTO);
     }
 

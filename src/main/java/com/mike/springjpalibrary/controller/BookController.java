@@ -1,20 +1,16 @@
 package com.mike.springjpalibrary.controller;
 
 import com.mike.springjpalibrary.controller.Mappers.BooksMapper;
-import com.mike.springjpalibrary.exceptions.DuplicateRegister;
-import com.mike.springjpalibrary.exceptions.OperationNotAllowed;
 import com.mike.springjpalibrary.model.Book;
 import com.mike.springjpalibrary.model.dto.AuthorDTO;
 import com.mike.springjpalibrary.model.dto.BookDTO;
 import com.mike.springjpalibrary.model.dto.RegisterBookDTO;
-import com.mike.springjpalibrary.model.dto.ResponseErrorDTO;
 import com.mike.springjpalibrary.repository.BookRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -84,25 +80,25 @@ public class BookController implements GeneralisedController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteById(@PathVariable String id) {
 
-        try {
-            var uuid = UUID.fromString(id);
-            var book = bookRepository.findById(uuid);
-            if (book.isPresent()) {
-                bookRepository.delete(book.get());
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.notFound().build();
+        //  try {
+        var uuid = UUID.fromString(id);
+        var book = bookRepository.findById(uuid);
+        if (book.isPresent()) {
+            bookRepository.delete(book.get());
+            return ResponseEntity.noContent().build();
         }
-        catch (OperationNotAllowed ex) {
+        return ResponseEntity.notFound().build();
+        // }
+      /*  catch (OperationNotAllowed ex) {
             var error = ResponseErrorDTO.operationNotAllowed(ex.getMessage());
             return ResponseEntity.status(error.status()).body(error);
-        }
+            }*/
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> saveBook(@RequestBody @Valid RegisterBookDTO bookDTO) {
-        try {
-            Book book = booksMappingClass.registerBook(bookDTO);
+        // try {
+        Book book = booksMappingClass.registerBook(bookDTO);
             /*book.setTitulo(bookDTO.title());
             book.setIsbn(bookDTO.isbn());
             book.setDataPublicacao(bookDTO.dataPublicacao());
@@ -110,18 +106,18 @@ public class BookController implements GeneralisedController {
             book.setDataPublicacao(bookDTO.dataPublicacao());
             book.setGenero(bookDTO.genero());*/
 
-            bookRepository.save(book);
+        bookRepository.save(book);
 
-            //URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(book.getId()).toUri(); // build new url with current one
-            URI uri = generateURI(book.getId());
-            return ResponseEntity.status(HttpStatus.CREATED).location(uri).build();
-        }
-        catch (DuplicateRegister ex) {
+        //URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(book.getId()).toUri(); // build new url with current one
+        URI uri = generateURI(book.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).location(uri).build();
+        // }
+    /*    catch (DuplicateRegister ex) {
             var error = ResponseErrorDTO.conflictResponseErrorDTO(ex.getMessage());
             return ResponseEntity.status(error.status()).body(error);
         }
+    }*/
+
     }
-
-
 
 }

@@ -20,5 +20,6 @@ public abstract class BooksMapper {
 
     // bcs form iddUser in dto I need to pass the Author with taht id!
     @Mapping(target = "author", expression = "java( authorRepository.findById(registerBookDTO.idUser()).orElse(null) )")
+    @Mapping(target = "titulo", source = "title")
     public abstract Book registerBook(RegisterBookDTO registerBookDTO);
 }

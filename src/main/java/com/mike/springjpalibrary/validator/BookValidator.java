@@ -15,6 +15,7 @@ public class BookValidator {
 
     public void validate(Book book) {
         if (findDuplicateISBN(book)) {
+            System.out.println("Duplicate ISBN ! ! !");
             throw new DuplicateRegister("Book already exists");
         }
     }
@@ -22,10 +23,7 @@ public class BookValidator {
 
     public boolean findDuplicateISBN(Book book) {
         var found = bookRepository.existsByIsbn(book.getIsbn());
-        if (found) {
-            return true;
-        }
-        return false;
+        return found;
     }
 
 }

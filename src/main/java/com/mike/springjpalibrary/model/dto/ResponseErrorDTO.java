@@ -11,7 +11,7 @@ public record ResponseErrorDTO (
 ) {
 
     public static ResponseErrorDTO standardResponseErrorDTO(String message) {
-        return new ResponseErrorDTO(HttpStatus.BAD_REQUEST.value(), message, List.of());
+        return new ResponseErrorDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, List.of());
     }
 
     public static ResponseErrorDTO conflictResponseErrorDTO(String message) {
@@ -23,7 +23,7 @@ public record ResponseErrorDTO (
     }
 
     public static ResponseErrorDTO operationNotAllowed(String message) {
-        return new ResponseErrorDTO(HttpStatus.METHOD_NOT_ALLOWED.value(), message, List.of());
+        return new ResponseErrorDTO(HttpStatus.BAD_REQUEST.value(), message, List.of());
     }
 
 }
