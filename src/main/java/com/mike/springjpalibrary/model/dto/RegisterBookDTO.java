@@ -17,7 +17,7 @@ public record RegisterBookDTO(
         @NotBlank(message = "Mandatory field")
         String isbn,
         @NotBlank
-        String title,
+        String titulo,
         @NotNull
         @PastOrPresent
         LocalDate dataPublicacao,

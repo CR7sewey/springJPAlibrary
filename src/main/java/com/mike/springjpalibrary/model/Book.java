@@ -60,7 +60,7 @@ public class Book implements Serializable {
     @Column(name = "id_user")
     private UUID idUser;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY) // 1 author can have mutliple book - current table; fetch is EAGER by default
+    @ManyToOne(fetch = FetchType.LAZY) // 1 author can have mutliple book - current table; fetch is EAGER by default
     @JoinColumn(name = "id_author", nullable = false)
     private Author author;
 

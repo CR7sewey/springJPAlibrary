@@ -29,24 +29,9 @@ public class BookController implements GeneralisedController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<BookDTO>> findAll() {
         List<Book> books = bookRepository.findAll();
-        List<BookDTO> bookDTOS = books.stream().map(book -> {
-                    AuthorDTO authorDTO = new AuthorDTO(
-                            book.getAuthor().getId(),
-                            book.getAuthor().getNome(),
-                            book.getAuthor().getBirthDate(),
-                            book.getAuthor().getNationality()
-                    );
-                    return new BookDTO(
-                            book.getId(),
-                            book.getIsbn(),
-                            book.getTitulo(),
-                            book.getDataPublicacao(),
-                            book.getGenero(),
-                            book.getPreco(),
-                            authorDTO
-                    );
-                }
-        ).collect(Collectors.toList());
+        List<BookDTO> bookDTOS = books.stream()
+                .map(booksMappingClass::searchBook)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(bookDTOS);
     }
 
@@ -55,7 +40,7 @@ public class BookController implements GeneralisedController {
         var uuid = UUID.fromString(id);
         Optional<Book> book = bookRepository.findById(uuid);
         if (book.isPresent()) {
-            AuthorDTO authorDTO = new AuthorDTO(
+            /*AuthorDTO authorDTO = new AuthorDTO(
                     book.get().getAuthor().getId(),
                     book.get().getAuthor().getNome(),
                     book.get().getAuthor().getBirthDate(),
@@ -69,7 +54,8 @@ public class BookController implements GeneralisedController {
                     book.get().getGenero(),
                     book.get().getPreco(),
                     authorDTO
-            );
+            );*/
+            BookDTO bookDTO = booksMappingClass.searchBook(book.get());
 
 
             return ResponseEntity.ok().body(bookDTO);
