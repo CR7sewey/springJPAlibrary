@@ -45,7 +45,7 @@ class BookRepositoryTest {
         Book book = new Book();
         book.setDataPublicacao(LocalDate.of(2010,1,1));
         book.setGenero(Genero.CIENCIA);
-        book.setIsbn("2134q532523");
+        book.setIsbn("112233");
         book.setTitulo("Titulo do Book");
         book.setPreco(BigDecimal.valueOf(12));
 

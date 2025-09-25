@@ -1,5 +1,7 @@
 package com.mike.springjpalibrary.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -40,7 +42,7 @@ public class Book implements Serializable {
     private LocalDate dataPublicacao;
 
     @Enumerated(EnumType.STRING) // .ORDINAL is the position of the enumeration
-    @Column(nullable = false, length = 30)
+    @Column(length = 30)
     private Genero genero;
 
     @Column(precision = 20, scale = 2)
@@ -59,7 +61,7 @@ public class Book implements Serializable {
     private UUID idUser;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY) // 1 author can have mutliple book - current table; fetch is EAGER by default
-    @JoinColumn(name = "id_author")
+    @JoinColumn(name = "id_author", nullable = false)
     private Author author;
 
     @Deprecated

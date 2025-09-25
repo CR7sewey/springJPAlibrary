@@ -59,7 +59,7 @@ public class AuthorService implements IService<Author> {
         authorRepository.save(author);
     }
 
-    @Override
+    //@Override
     public List<Author> findByNameAndBirthDateAndNationality(String name, LocalDate birthDate, String nationality) {
         if(name == null && nationality == null && birthDate == null) {
             return authorRepository.findAll();
@@ -89,6 +89,7 @@ public class AuthorService implements IService<Author> {
         return authorRepository.findByNomeAndBirthDateAndNationality(name, birthDate, nationality);
     }
 
+    // replace of method above
     public List<Author> findByExample(String name, LocalDate birthDate, String nationality) {
         Author author = new Author();
         author.setNome(name);

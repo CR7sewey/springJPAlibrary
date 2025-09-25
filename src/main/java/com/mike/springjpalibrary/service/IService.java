@@ -15,6 +15,5 @@ public interface IService<T> {
     public List<T> findAll();
     public void delete(T t);
     public void update(T t);
-    public List<T> findByNameAndBirthDateAndNationality(String name, LocalDate birthDate, String nationality);
-
+    //public List<T> findByNameAndBirthDateAndNationality(String name, LocalDate birthDate, String nationality);
 }
