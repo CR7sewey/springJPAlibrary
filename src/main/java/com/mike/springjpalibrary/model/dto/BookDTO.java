@@ -14,6 +14,7 @@ import java.util.UUID;
 
 public record BookDTO(
         UUID id,
+
         String isbn,
         String title,
         LocalDate dataPublicacao,
