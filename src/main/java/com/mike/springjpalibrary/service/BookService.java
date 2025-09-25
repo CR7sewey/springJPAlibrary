@@ -1,7 +1,9 @@
 package com.mike.springjpalibrary.service;
 
 import com.mike.springjpalibrary.model.Book;
+import com.mike.springjpalibrary.repository.AuthorRepository;
 import com.mike.springjpalibrary.repository.BookRepository;
+import com.mike.springjpalibrary.validator.BookValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +17,13 @@ import java.util.UUID;
 public class BookService implements IService<Book> {
 
     private final BookRepository bookRepository;
+    private final BookValidator bookValidator;
 
 
     @Override
     public Book save(Book book) {
-        return null;
+        bookValidator.validate(book);
+        return bookRepository.save(book);
     }
 
     @Override

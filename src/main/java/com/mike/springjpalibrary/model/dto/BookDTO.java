@@ -21,14 +21,5 @@ public record BookDTO(
         BigDecimal preco,
         AuthorDTO author
 ) {
-    public Book bookToDTO() {
-        Book book = new Book();
-        book.setId(id);
-        book.setTitulo(title);
-        book.setIsbn(isbn);
-        book.setDataPublicacao(dataPublicacao);
-        book.setGenero(genero);
-        book.setPreco(preco);
-        return book;
-    }
+
 }

@@ -1,5 +1,6 @@
 package com.mike.springjpalibrary.controller;
 
+import com.mike.springjpalibrary.controller.Mappers.AuthorMapper;
 import com.mike.springjpalibrary.exceptions.DuplicateRegister;
 import com.mike.springjpalibrary.exceptions.FieldsValidator;
 import com.mike.springjpalibrary.exceptions.OperationNotAllowed;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -32,11 +34,13 @@ import java.util.UUID;
 public class AuthorController
 {
     private AuthorService authorService;
+    private AuthorMapper authorMapper;
 
     @Autowired
-    public AuthorController(AuthorService authorService) // bean gerenciado (service)
+    public AuthorController(AuthorService authorService, AuthorMapper authorMapper) // bean gerenciado (service)
     {
         this.authorService = authorService;
+        this.authorMapper = authorMapper;
     }
 
     @PostMapping
@@ -44,7 +48,7 @@ public class AuthorController
     {
         try {
             // Author - camada de persitencia; AuthorDTo - view
-            var author = authorDTO.dtoToAuthor();
+            var author = authorMapper.authorDTOToAuthor(authorDTO);
             authorService.save(author);
             // ex: .../author -> .../author/1
             URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(author.getId()).toUri(); // build new url with current one
@@ -81,7 +85,7 @@ public class AuthorController
     public ResponseEntity<AuthorDTO> findById(@PathVariable String id)
     {
         var uuid = UUID.fromString(id);
-        Optional<Author> author = authorService.findById(uuid);
+        /*Optional<Author> author = authorService.findById(uuid);
         if (author.isPresent()) {
             AuthorDTO authorDTO = new AuthorDTO(
                     author.get().getId(),
@@ -89,9 +93,17 @@ public class AuthorController
                     author.get().getBirthDate(),
                     author.get().getNationality()
             );
+            AuthorDTO authorDTO = authorMapper.authorToAuthorDTO(author.get());
             return ResponseEntity.ok().body(authorDTO);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.notFound().build();*/
+        return authorService.findById(uuid)
+                .map(author -> {
+                    var dto = authorMapper.authorToAuthorDTO(author);
+                    return ResponseEntity.ok(dto);
+
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
 
     }
 
@@ -127,12 +139,8 @@ public class AuthorController
     {
         var authors = authorService.findByExample(name, birthDate, nationality);
         List<AuthorDTO> authorDTOs = new ArrayList<>();
-        authors.stream().map(aut -> new AuthorDTO(
-                aut.getId(),
-                aut.getNome(),
-                aut.getBirthDate(),
-                aut.getNationality()
-        )).forEach(authorDTOs::add);
+        authors.stream().map(authorMapper::authorToAuthorDTO
+        ).collect(Collectors.toList());
 
        /* AuthorDTO authorDTO = new AuthorDTO(
                 authors.get().getId(),

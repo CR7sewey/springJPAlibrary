@@ -20,12 +20,4 @@ public record AuthorDTO(
         String nationality
 ) {
 
-    public Author dtoToAuthor()
-    {
-        Author author = new Author();
-        author.setNome(this.nome);
-        author.setBirthDate(this.birthDate);
-        author.setNationality(this.nationality);
-        return author;
-    }
 }
