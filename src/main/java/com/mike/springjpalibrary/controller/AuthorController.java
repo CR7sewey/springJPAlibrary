@@ -5,6 +5,7 @@ import com.mike.springjpalibrary.exceptions.DuplicateRegister;
 import com.mike.springjpalibrary.exceptions.FieldsValidator;
 import com.mike.springjpalibrary.exceptions.OperationNotAllowed;
 import com.mike.springjpalibrary.model.Author;
+import com.mike.springjpalibrary.model.Book;
 import com.mike.springjpalibrary.model.dto.AuthorDTO;
 import com.mike.springjpalibrary.model.dto.ResponseErrorDTO;
 import com.mike.springjpalibrary.repository.AuthorRepository;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/authors")
 //@RequiredArgsConstructor - dependency injection without constructor set by us
-public class AuthorController
+public class AuthorController implements GeneralisedController
 {
     private AuthorService authorService;
     private AuthorMapper authorMapper;
@@ -51,7 +52,8 @@ public class AuthorController
             var author = authorMapper.authorDTOToAuthor(authorDTO);
             authorService.save(author);
             // ex: .../author -> .../author/1
-            URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(author.getId()).toUri(); // build new url with current one
+            //URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(author.getId()).toUri(); // build new url with current one
+            URI uri = generateURI(author.getId());
             return ResponseEntity.status(HttpStatus.CREATED).location(uri).build();
 
         }
@@ -138,9 +140,8 @@ public class AuthorController
     public ResponseEntity<List<AuthorDTO>> findByNameOrNationality(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "birthDate", required = false) LocalDate birthDate, @RequestParam(value = "nationality", required = false) String nationality)
     {
         var authors = authorService.findByExample(name, birthDate, nationality);
-        List<AuthorDTO> authorDTOs = new ArrayList<>();
-        authors.stream().map(authorMapper::authorToAuthorDTO
-        ).collect(Collectors.toList());
+        List<AuthorDTO> authorDTOs = authors.stream().map(authorMapper::authorToAuthorDTO
+        ).toList();
 
        /* AuthorDTO authorDTO = new AuthorDTO(
                 authors.get().getId(),

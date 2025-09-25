@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
-public class BookController {
+public class BookController implements GeneralisedController {
 
     private final BookRepository bookRepository;
     private final BooksMapper booksMappingClass;
@@ -112,8 +112,8 @@ public class BookController {
 
             bookRepository.save(book);
 
-            URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(book.getId()).toUri(); // build new url with current one
-
+            //URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(book.getId()).toUri(); // build new url with current one
+            URI uri = generateURI(book.getId());
             return ResponseEntity.status(HttpStatus.CREATED).location(uri).build();
         }
         catch (DuplicateRegister ex) {
