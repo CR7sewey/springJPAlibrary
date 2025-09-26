@@ -2,10 +2,12 @@ package com.mike.springjpalibrary.controller;
 
 import com.mike.springjpalibrary.controller.Mappers.BooksMapper;
 import com.mike.springjpalibrary.model.Book;
+import com.mike.springjpalibrary.model.Genero;
 import com.mike.springjpalibrary.model.dto.AuthorDTO;
 import com.mike.springjpalibrary.model.dto.BookDTO;
 import com.mike.springjpalibrary.model.dto.RegisterBookDTO;
 import com.mike.springjpalibrary.repository.BookRepository;
+import com.mike.springjpalibrary.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,12 +26,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookController implements GeneralisedController {
 
-    private final BookRepository bookRepository;
+    private final BookService bookService;
     private final BooksMapper booksMappingClass;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<BookDTO>> findAll() {
-        List<Book> books = bookRepository.findAll();
+    public ResponseEntity<List<BookDTO>> findAll(
+            @RequestParam(required = false) String isbn,
+            @RequestParam(required = false) String titulo,
+            @RequestParam(required = false, value = "nome-autor") String nomeAutor,
+            @RequestParam(required = false)Genero genero,
+            @RequestParam(required = false, value = "ano-publicacao")LocalDate dataPublicacao
+            ) {
+        List<Book> books = bookService.findBySpecification(isbn, titulo, nomeAutor, genero, dataPublicacao);
         List<BookDTO> bookDTOS = books.stream()
                 .map(booksMappingClass::searchBook)
                 .collect(Collectors.toList());
@@ -38,7 +47,7 @@ public class BookController implements GeneralisedController {
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public ResponseEntity<BookDTO> findId(@PathVariable String id) {
         var uuid = UUID.fromString(id);
-        Optional<Book> book = bookRepository.findById(uuid);
+        Optional<Book> book = bookService.findById(uuid);
         if (book.isPresent()) {
             /*AuthorDTO authorDTO = new AuthorDTO(
                     book.get().getAuthor().getId(),
@@ -68,12 +77,12 @@ public class BookController implements GeneralisedController {
 
         //  try {
         var uuid = UUID.fromString(id);
-        var book = bookRepository.findById(uuid);
-        if (book.isPresent()) {
-            bookRepository.delete(book.get());
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        return bookService.findById(uuid).map(book ->
+        {
+            bookService.delete(book);
+            return ResponseEntity.ok().build();
+
+        }).orElseGet(() -> ResponseEntity.notFound().build());
         // }
       /*  catch (OperationNotAllowed ex) {
             var error = ResponseErrorDTO.operationNotAllowed(ex.getMessage());
@@ -92,7 +101,7 @@ public class BookController implements GeneralisedController {
             book.setDataPublicacao(bookDTO.dataPublicacao());
             book.setGenero(bookDTO.genero());*/
 
-        bookRepository.save(book);
+        bookService.save(book);
 
         //URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(book.getId()).toUri(); // build new url with current one
         URI uri = generateURI(book.getId());

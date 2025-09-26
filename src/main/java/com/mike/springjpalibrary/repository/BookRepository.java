@@ -4,6 +4,7 @@ import com.mike.springjpalibrary.model.Author;
 import com.mike.springjpalibrary.model.Book;
 import com.mike.springjpalibrary.model.Genero;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +15,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-public interface BookRepository extends JpaRepository<Book, UUID> {
+// https://docs.spring.io/spring-data/jpa/reference/jpa/specifications.html
+public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificationExecutor<Book> {
     // https://www.google.com/search?q=jpa+query+methods+spring&rlz=1C1ONGR_pt-PTPT1162PT1164&oq=jpa+query+methods+spring&gs_lcrp=EgZjaHJvbWUyCwgAEEUYHhg5GKkGMgkIARAAGB4YqQYyCQgCEAAYHhipBjIICAMQABgWGB4yCAgEEAAYFhgeMggIBRAAGBYYHjIICAYQABgWGB4yCAgHEAAYFhgeMggICBAAGBYYHjIKCAkQABiABBiiBNIBCDc1NjBqMGo0qAIAsAIB&sourceid=chrome&ie=UTF-8
     List<Book> findByAuthor(Author author);
     boolean existsByAuthor(Author author);
