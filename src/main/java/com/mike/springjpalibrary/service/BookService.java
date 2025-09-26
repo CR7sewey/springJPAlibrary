@@ -54,7 +54,11 @@ public class BookService implements IService<Book> {
 
     @Override
     public void update(Book book) {
-
+        if (book.getId() == null) {
+            throw new IllegalArgumentException("Book not registered");
+        }
+        //bookValidator.validate(book);
+        bookRepository.save(book);
     }
 
     public List<Book> findBySpecification(

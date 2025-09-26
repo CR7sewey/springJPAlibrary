@@ -55,7 +55,7 @@ public class ResourceExceptionHandler {
 
     @ExceptionHandler(OperationNotAllowed.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Object> handleOperationNotAllowed(DuplicateRegister e, HttpServletRequest request){
+    public ResponseEntity<Object> handleOperationNotAllowed(OperationNotAllowed e, HttpServletRequest request){
         System.out.println("AQUUUUUUUUUUUUUUUUUUUUUi 2");
         ResponseErrorDTO errorDTO = ResponseErrorDTO.operationNotAllowed(e.getMessage());
         return ResponseEntity.status(errorDTO.status()).body(errorDTO);
@@ -63,7 +63,7 @@ public class ResourceExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<Object> handleRunTimeException(DuplicateRegister e, HttpServletRequest request){
+    public ResponseEntity<Object> handleRunTimeException(RuntimeException e, HttpServletRequest request){
         System.out.println("AQUUUUUUUUUUUUUUUUUUUUUi 2");
         ResponseErrorDTO errorDTO = ResponseErrorDTO.standardResponseErrorDTO(e.getMessage());
         return ResponseEntity.status(errorDTO.status()).body(errorDTO);

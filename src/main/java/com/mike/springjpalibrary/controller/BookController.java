@@ -115,4 +115,42 @@ public class BookController implements GeneralisedController {
 
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Object> updateBook(@PathVariable String id, @RequestBody @Valid RegisterBookDTO bookDTO) {
+
+        var uuid = UUID.fromString(id);
+        Optional<Book> book = bookService.findById(uuid);
+        if (book.isPresent()) {
+            Book b = booksMappingClass.registerBook(bookDTO);
+            book.get().setTitulo(b.getTitulo());
+            book.get().setGenero(b.getGenero());
+            book.get().setPreco(b.getPreco());
+            book.get().setIsbn(b.getIsbn());
+            book.get().setDataPublicacao(b.getDataPublicacao());
+            book.get().setAuthor(b.getAuthor());
+
+
+            bookService.update(book.get());
+            return  ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.notFound().build();
+
+       /* return bookService.findById(uuid)
+                .map(book -> {
+                            Book book2 = booksMappingClass.registerBook(bookDTO);
+                            book2.setAuthor(book.getAuthor());
+                            book2.setGenero(book.getGenero());
+                            book2.setDataPublicacao(book.getDataPublicacao());
+                            book2.setIsbn(book.getIsbn());
+                            book2.setTitulo(book.getTitulo());
+                            bookService.update(book2);
+                            System.out.println("Book updated");
+                            return ResponseEntity.noContent().build();
+                        }
+                )
+                .orElseGet(() -> ResponseEntity.notFound().build());*/
+
+    }
+
 }
