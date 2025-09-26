@@ -98,6 +98,9 @@ public class BookService implements IService<Book> {
         if (dataPublicacao != null) {
             sp = sp.and(BookSpecs.isDataPublicacaoYear(dataPublicacao));
         }
+        if (nomeAutor != null) {
+            sp = sp.and(BookSpecs.isAuthorLike(nomeAutor));
+        }
 
 
         return bookRepository.findAll(sp);
