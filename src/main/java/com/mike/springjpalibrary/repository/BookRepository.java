@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 // https://docs.spring.io/spring-data/jpa/reference/jpa/specifications.html
@@ -21,7 +22,7 @@ public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificat
     List<Book> findByAuthor(Author author);
     boolean existsByAuthor(Author author);
     List<Book> findByTitulo(String Titulo);
-    Book findByIsbn(String Isbn);
+    Optional<Book> findByIsbn(String Isbn);
     List<Book> findByTituloAndPreco(String Title, BigDecimal preco);
 
 

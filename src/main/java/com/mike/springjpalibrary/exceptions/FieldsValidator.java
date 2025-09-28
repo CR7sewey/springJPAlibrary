@@ -12,9 +12,11 @@ public class FieldsValidator extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     private List<FieldErrorDTO> fieldErrors = new ArrayList<>();
+    private String field;
 
-    public FieldsValidator(String message) {
+    public FieldsValidator(String message, String field) {
         super(message);
+        this.field = field;
     }
 
 }

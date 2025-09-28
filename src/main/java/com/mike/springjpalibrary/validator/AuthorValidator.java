@@ -33,15 +33,15 @@ public class AuthorValidator {
             throw new DuplicateRegister("Author already exists");
         }
         System.out.println(validateFieldRegister(author));
-        if (validateFieldRegister(author)) {
+        /*if (validateFieldRegister(author)) {
             System.out.println("FIELD REGISTER");
-            var fieldValidator = new FieldsValidator("Validation failed");
+            var fieldValidator = new FieldsValidator("Validation failed", "");
             fieldValidator.getFieldErrors().addAll(
                     fieldErrors
             );
             throw fieldValidator;
 
-        }
+        }*/
     }
 
 

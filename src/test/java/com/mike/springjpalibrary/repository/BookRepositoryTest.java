@@ -97,8 +97,8 @@ class BookRepositoryTest {
 
     @Test
     void findBookISBN() {
-        Book books = bookRepository.findByIsbn("2134q532523");
-        System.out.println(books);
+        var books = bookRepository.findByIsbn("2134q532523");
+        books.ifPresent(System.out::println);
     }
 
     @Test

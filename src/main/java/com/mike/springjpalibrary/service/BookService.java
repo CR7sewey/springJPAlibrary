@@ -57,7 +57,7 @@ public class BookService implements IService<Book> {
         if (book.getId() == null) {
             throw new IllegalArgumentException("Book not registered");
         }
-        //bookValidator.validate(book);
+        bookValidator.validate(book);
         bookRepository.save(book);
     }
 

@@ -1,6 +1,7 @@
 package com.mike.springjpalibrary.controller;
 
 import com.mike.springjpalibrary.exceptions.DuplicateRegister;
+import com.mike.springjpalibrary.exceptions.FieldsValidator;
 import com.mike.springjpalibrary.exceptions.OperationNotAllowed;
 import com.mike.springjpalibrary.model.dto.FieldErrorDTO;
 import com.mike.springjpalibrary.model.dto.ResponseErrorDTO;
@@ -68,5 +69,16 @@ public class ResourceExceptionHandler {
         ResponseErrorDTO errorDTO = ResponseErrorDTO.standardResponseErrorDTO(e.getMessage());
         return ResponseEntity.status(errorDTO.status()).body(errorDTO);
     }
+
+    @ExceptionHandler(FieldsValidator.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ResponseEntity<Object> handleFieldsValidator(FieldsValidator e, HttpServletRequest request){
+        FieldErrorDTO fieldErrorDTO = new FieldErrorDTO(
+                e.getField(), e.getMessage()
+        );
+        ResponseErrorDTO errorDTO = ResponseErrorDTO.unprocessableEntity("Validation failed", List.of(fieldErrorDTO));
+        return ResponseEntity.status(errorDTO.status()).body(errorDTO);
+    }
+
 
 }
