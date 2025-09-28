@@ -10,6 +10,8 @@ import com.mike.springjpalibrary.repository.BookRepository;
 import com.mike.springjpalibrary.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,17 +32,21 @@ public class BookController implements GeneralisedController {
     private final BooksMapper booksMappingClass;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<BookDTO>> findAll(
+    public ResponseEntity<Page<BookDTO>> findAll(
             @RequestParam(required = false) String isbn,
             @RequestParam(required = false) String titulo,
             @RequestParam(required = false, value = "nome-autor") String nomeAutor,
             @RequestParam(required = false)Genero genero,
-            @RequestParam(required = false, value = "ano-publicacao")LocalDate dataPublicacao
+            @RequestParam(required = false, value = "ano-publicacao")LocalDate dataPublicacao,
+            @RequestParam(required = false, defaultValue = "0", value = "page") Integer page,
+            @RequestParam(required = false, defaultValue = "10", value = "page-size") Integer pageSize
             ) {
-        List<Book> books = bookService.findBySpecification(isbn, titulo, nomeAutor, genero, dataPublicacao);
-        List<BookDTO> bookDTOS = books.stream()
+        Page<Book> p = bookService.findBySpecification(isbn, titulo, nomeAutor, genero, dataPublicacao, page, pageSize);
+        /*List<BookDTO> bookDTOS = books.stream()
                 .map(booksMappingClass::searchBook)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
+
+        Page<BookDTO> bookDTOS = p.map(booksMappingClass::searchBook);
         return ResponseEntity.ok(bookDTOS);
     }
 

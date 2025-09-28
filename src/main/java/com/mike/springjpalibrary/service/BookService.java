@@ -10,8 +10,7 @@ import com.mike.springjpalibrary.validator.BookValidator;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.criteria.CriteriaQuery;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,12 +60,14 @@ public class BookService implements IService<Book> {
         bookRepository.save(book);
     }
 
-    public List<Book> findBySpecification(
+    public Page<Book> findBySpecification(
             String isbn,
             String titulo,
             String nomeAutor,
             Genero genero,
-            LocalDate dataPublicacao
+            LocalDate dataPublicacao,
+            Integer numPage,
+            Integer pageSize
     ) {
        /* Book book = new Book();
         book.setIsbn(isbn);
@@ -106,8 +107,12 @@ public class BookService implements IService<Book> {
             sp = sp.and(BookSpecs.isAuthorLike(nomeAutor));
         }
 
+        // spring/jpa already implemented
+        // if not, SELECT * FROM TableName ORDER BY id OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY; something like this
+        Pageable page = PageRequest.of(numPage, pageSize);
 
-        return bookRepository.findAll(sp);
+
+        return bookRepository.findAll(sp, page);
     }
 
 

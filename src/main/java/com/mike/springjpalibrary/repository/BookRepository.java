@@ -3,6 +3,8 @@ package com.mike.springjpalibrary.repository;
 import com.mike.springjpalibrary.model.Author;
 import com.mike.springjpalibrary.model.Book;
 import com.mike.springjpalibrary.model.Genero;
+import org.hibernate.query.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -62,5 +64,7 @@ public interface BookRepository extends JpaRepository<Book, UUID>, JpaSpecificat
 
 
     boolean existsByIsbn(String isbn);
+
+   // Page<Book> findByAuthor(Author author, Pageable pageable);
 
 }
