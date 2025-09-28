@@ -4,26 +4,28 @@
 
 - main: JPA concepts
 - authorAPI: API devolopement from main
-- 
-# 📚 Registo de Autor
+- bookAPI: API development from authorAPI
+
+# 📚 Registo de Livros
 
 ## 📖 Descrição
-Sistema para gerenciamento de autores de livros, permitindo cadastro, atualização, consulta e exclusão.  
-O sistema aplica regras de negócio para garantir integridade dos dados e respeitar os diferentes perfis de usuários.
+Deseja-se registar os livros, bem como realizar suas atualizações, consultas e permitir sua exclusão. Ao consultar um livro, deverá ser disponibilizado alguns filtros de pesquisa para busca paginada, campos de busca: titulo, genero, isbn, nome do autor e ano de publicação.
 
 ---
 
 ## 👥 Atores
-- **Gerente**: pode **cadastrar, atualizar e remover** autores.
-- **Operador**: pode **consultar** os dados dos autores.
-
+- **Gerente e Operador**: pode **cadastrar, atualizar e remover** autores.
+  
 ---
 
-## 🗂️ Campos do Autor
+## 🗂️ Campos do Livro
 ### Campos obrigatórios:
-- **Nome**
-- **Data de Nascimento**
-- **Nacionalidade**
+- **ISBN**
+- **Titulo**
+- **Data de Publicacao**
+- **Genero** (não obrigatorio)
+- **Preco** (nao obrigatorio)
+- **Autor**
 
 ### Campos de controle (aplicação/auditoria):
 - **ID** (UUID)
@@ -34,21 +36,25 @@ O sistema aplica regras de negócio para garantir integridade dos dados e respei
 ---
 
 ## ⚖️ Regras de Negócio
-- Não permitir **registo de autores duplicados** (Nome + Data de Nascimento + Nacionalidade).
-- Não permitir **exclusão de autor vinculado a algum livro**.
+- Não permitir cadastrar um Livro com mesmo ISBN que outro.
+- Se a data de publicação for a partir de 2020, deverá ter o preço informado obrigatoriamente.
+- Data de publicação não pode ser uma data futura.
 
 ---
 
 ## 🔗 Contrato da API
 
-### ➕ Registo Autor
-- **POST** `/autores`  
+### ➕ Registo Livro
+- **POST** `/books`  
   **Body**:
 ```json
 {
-  "nome": "string",
-  "dataNascimento": "date",
-  "nacionalidade": "string"
+  "isbn": "string",
+  "titulo": "string",
+  "dataPublicacao": "date",
+  "genero": "enum",
+  "preco": number,
+  "id_autor": "uuid"
 }
 ```
 - Resposta
@@ -65,26 +71,26 @@ Body:
 {
 "status": 422,
 "message": "Erro de Validação",
-"errors: [
-{ "field": "nome", "error": "Nome é obrigatório" }
-]
+"errors": [
+      { "field": "titulo", "error": "Campo obrigatório" }
+    ]
 }
 ```
-3. Autor Duplicado
+3. ISBN Duplicado
 
 Código: 409 - Conflict
 Body:
 ```json
 {
 "status": 409,
-"message": "Registro Duplicado",
-"errors: []
+"message": "ISBN Duplicado",
+"errors": []
 }
 ```
 
 
 ### ➕ Visualizar Detalhes do Autor
-- **GET** `/autores/{id}`
+- **GET** `/books/{id}`
 
 - Resposta
 1. Sucesso
@@ -94,17 +100,24 @@ Body:
 ```json
 {
   "id": "uuid",
-  "nome": "string",
-  "dataNascimento": "date",
-  "nacionalidade": "string;
+  "isbn": "string",
+  "titulo": "string",
+  "dataPublicacao": "date",
+  "genero": "enum",
+  "preco": number,
+  "autor": {
+    "nome": "string",
+    "dataNascimento": "date",
+    "nacionalidade": "string;
+  }
 }
 ```
 2. Erro de Validação
 
 Código: 404 - Erro
 
-### ➕ Excluir Autor
-- **Delete** `/autores/{id}`
+### ➕ Excluir Livro
+- **Delete** `/books/{id}`
 
 - Resposta
 1. Sucesso
@@ -113,19 +126,11 @@ Código: 204 - No Content
 
 2. Erro
 
-Código: 400 - Erro
-Body:
-```json
-{
-  "status": 400,
-  "message": "Erro na exclusão: registro está sendo utilizado.",
-  "errors: []
-}
-```
+Código: 404 - Erro
 
 ### ➕ Pesquisar Autor
-- **GET** `/autores`  
-- Query Params: nome, nacionalidade, birth date
+- **GET** `/books`  
+- Query Params: isbn, titulo, nome autor, genero, ano de publicação
   **Body**:
 
 - Resposta
@@ -136,20 +141,30 @@ Body:
 ```json
 [{
   "id": "uuid",
-  "nome": "string",
-  "dataNascimento": "date",
-  "nacionalidade": "string;
+  "isbn": "string",
+  "titulo": "string",
+  "dataPublicacao": "date",
+  "genero": "enum",
+  "preco": number,
+  "autor": {
+    "nome": "string",
+    "dataNascimento": "date",
+    "nacionalidade": "string;
+  }
 }]
 ```
 
-### ➕ Update Autor
-- **Put** `/autores/{id}`  
+### ➕ Update Book
+- **Put** `/books/{id}`  
   **Body**:
 ```json
 {
-  "nome": "string",
-  "dataNascimento": "date",
-  "nacionalidade": "string"
+  "isbn": "string",
+  "titulo": "string",
+  "dataPublicacao": "date",
+  "genero": "enum",
+  "preco": number,
+  "id_autor": "uuid"
 }
 ```
 - Resposta
@@ -166,18 +181,18 @@ Body:
 "status": 422,
 "message": "Erro de Validação",
 "errors: [
-{ "field": "nome", "error": "Nome é obrigatório" }
-]
+      { "field": titulo, "error": "Campo obrigatório" }
+    ]
 }
 ```
-3. Autor Duplicado
+3. ISBN Duplicado
 
 Código: 409 - Conflict
 Body:
 ```json
 {
 "status": 409,
-"message": "Registro Duplicado",
+"message": "ISBN Duplicado",
 "errors: []
 }
 ```
