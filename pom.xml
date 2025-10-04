@@ -72,6 +72,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId> <!-- web pages in spring -->
         </dependency>
+        <dependency>
+            <groupId>io.hypersistence</groupId> <!-- convert jdk list in db array -->
+            <artifactId>hypersistence-utils-hibernate-63</artifactId>
+            <version>3.8.3</version>
+        </dependency>
     </dependencies>
 
     <build>

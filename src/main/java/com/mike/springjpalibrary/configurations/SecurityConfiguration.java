@@ -1,7 +1,10 @@
 package com.mike.springjpalibrary.configurations;
 
+import com.mike.springjpalibrary.security.CustomUserDetailsService;
+import com.mike.springjpalibrary.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,7 +28,20 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable) // sem disable - protecao para fazer requisicoes pelas paginas auotrizadas (token)
                 .formLogin(configurer -> configurer.loginPage("/login").permitAll()) //(Customizer.withDefaults()) // habilita via login forms; configurer -> configurer.loginPage("/login.html").successForwardUrl("/home.html")
                 .httpBasic(Customizer.withDefaults()) // habilita via http basic; https://www.debugbear.com/basic-auth-header-generator
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()) // any requisition needs to be with authentication
+                .authorizeHttpRequests(authorize -> {
+                            authorize.requestMatchers("/login").permitAll();
+                            authorize.requestMatchers(HttpMethod.POST,"/users/**").permitAll();
+                            authorize.requestMatchers(HttpMethod.POST, "/authors/**").hasRole("ADMIN"); //.hasAuthority("REGISTER_AUTHOR")
+                            authorize.requestMatchers(HttpMethod.DELETE, "/authors/**").hasRole("ADMIN");
+                            authorize.requestMatchers(HttpMethod.PUT, "/authors/**").hasRole("ADMIN");
+                            authorize.requestMatchers(HttpMethod.GET, "/authors/**").hasAnyRole("ADMIN", "USER", "Admin");  // only admins can do authors/... operations
+                            authorize.requestMatchers("/books/**").hasAnyRole("USER","ADMIN"); // everyone can access wiht roles "USER" and "ADMIN" has long as they are logged in
+
+
+                            authorize.anyRequest().authenticated(); // needs to be authenticated; last rule!!
+
+                        }
+                ) // any requisition needs to be with authentication
                 .build();
 
     }
@@ -35,6 +51,12 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder(10);
     }
 
+    @Bean
+    public UserDetailsService userDetailsService(UserService userService) {
+        return new CustomUserDetailsService(userService);
+    }
+
+    /*
     @Bean                                                   //
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) { //UserDetailsService
         // In memory
@@ -58,5 +80,7 @@ public class SecurityConfiguration {
             throw new RuntimeException(e);
         }
     }
+
+     */
 
 }
