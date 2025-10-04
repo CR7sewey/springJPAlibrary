@@ -26,4 +26,8 @@ public record ResponseErrorDTO (
         return new ResponseErrorDTO(HttpStatus.BAD_REQUEST.value(), message, List.of());
     }
 
+    public static ResponseErrorDTO accessDenied(String message) {
+        return new ResponseErrorDTO(HttpStatus.FORBIDDEN.value(), message, List.of());
+    }
+
 }

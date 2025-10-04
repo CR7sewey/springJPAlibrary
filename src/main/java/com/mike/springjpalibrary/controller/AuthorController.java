@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -34,6 +35,7 @@ public class AuthorController implements GeneralisedController
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> saveAuthor(@RequestBody @Valid AuthorDTO authorDTO)
     {
         //try {
@@ -73,6 +75,7 @@ public class AuthorController implements GeneralisedController
     }*/
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'Admin', 'USER')")
     public ResponseEntity<AuthorDTO> findById(@PathVariable String id)
     {
         var uuid = UUID.fromString(id);
@@ -100,6 +103,7 @@ public class AuthorController implements GeneralisedController
 
     // idempotente - mesmo retorno independentemente da repsota (not cool)
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> deleteById(@PathVariable String id)
     {
         // try {
@@ -126,6 +130,7 @@ public class AuthorController implements GeneralisedController
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'Admin', 'USER')")
     public ResponseEntity<List<AuthorDTO>> findByNameOrNationality(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "birthDate", required = false) LocalDate birthDate, @RequestParam(value = "nationality", required = false) String nationality)
     {
         var authors = authorService.findByExample(name, birthDate, nationality);
@@ -142,6 +147,7 @@ public class AuthorController implements GeneralisedController
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> updateAuthor(@PathVariable String id, @RequestBody @Valid AuthorDTO authorDTO)
     {
         //  try {

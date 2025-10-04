@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,15 @@ public class ResourceExceptionHandler {
         ResponseErrorDTO errorDTO = ResponseErrorDTO.operationNotAllowed(e.getMessage());
         return ResponseEntity.status(errorDTO.status()).body(errorDTO);
     }
+
+    // needed at method controller level in security authorization
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleAccessDenied(AccessDeniedException e, HttpServletRequest request){
+        ResponseErrorDTO errorDTO = ResponseErrorDTO.accessDenied(e.getMessage());
+        return ResponseEntity.status(errorDTO.status()).body(errorDTO);
+    }
+
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

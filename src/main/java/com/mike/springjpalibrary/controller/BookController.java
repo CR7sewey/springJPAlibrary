@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -32,6 +33,7 @@ public class BookController implements GeneralisedController {
     private final BooksMapper booksMappingClass;
 
     @RequestMapping(method = RequestMethod.GET)
+    @PreAuthorize("hasAnyRole('ADMIN', 'Admin', 'USER')")
     public ResponseEntity<Page<BookDTO>> findAll(
             @RequestParam(required = false) String isbn,
             @RequestParam(required = false) String titulo,
@@ -51,6 +53,7 @@ public class BookController implements GeneralisedController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'Admin', 'USER')")
     public ResponseEntity<BookDTO> findId(@PathVariable String id) {
         var uuid = UUID.fromString(id);
         Optional<Book> book = bookService.findById(uuid);
@@ -79,6 +82,7 @@ public class BookController implements GeneralisedController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'Admin', 'USER')")
     public ResponseEntity<Object> deleteById(@PathVariable String id) {
 
         //  try {
@@ -97,6 +101,7 @@ public class BookController implements GeneralisedController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
+    @PreAuthorize("hasAnyRole('ADMIN', 'Admin', 'USER')")
     public ResponseEntity<Object> saveBook(@RequestBody @Valid RegisterBookDTO bookDTO) {
         // try {
         Book book = booksMappingClass.registerBook(bookDTO);
@@ -122,6 +127,7 @@ public class BookController implements GeneralisedController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @PreAuthorize("hasAnyRole('ADMIN', 'Admin', 'USER')")
     public ResponseEntity<Object> updateBook(@PathVariable String id, @RequestBody @Valid RegisterBookDTO bookDTO) {
 
         var uuid = UUID.fromString(id);

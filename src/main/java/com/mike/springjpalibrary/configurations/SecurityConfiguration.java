@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true) // to make authorization in controllers
 public class SecurityConfiguration {
 
     @Bean  // http security parte do contexto do spring security; vai subscrever o security filter padrao
@@ -31,11 +33,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> {
                             authorize.requestMatchers("/login").permitAll();
                             authorize.requestMatchers(HttpMethod.POST,"/users/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.POST, "/authors/**").hasRole("ADMIN"); //.hasAuthority("REGISTER_AUTHOR")
-                            authorize.requestMatchers(HttpMethod.DELETE, "/authors/**").hasRole("ADMIN");
-                            authorize.requestMatchers(HttpMethod.PUT, "/authors/**").hasRole("ADMIN");
-                            authorize.requestMatchers(HttpMethod.GET, "/authors/**").hasAnyRole("ADMIN", "USER", "Admin");  // only admins can do authors/... operations
-                            authorize.requestMatchers("/books/**").hasAnyRole("USER","ADMIN"); // everyone can access wiht roles "USER" and "ADMIN" has long as they are logged in
+                           // authorize.requestMatchers(HttpMethod.POST, "/authors/**").hasRole("ADMIN"); //.hasAuthority("REGISTER_AUTHOR")
+                            //authorize.requestMatchers(HttpMethod.DELETE, "/authors/**").hasRole("ADMIN");
+                            //authorize.requestMatchers(HttpMethod.PUT, "/authors/**").hasRole("ADMIN");
+                            //authorize.requestMatchers(HttpMethod.GET, "/authors/**").hasAnyRole("ADMIN", "USER", "Admin");  // only admins can do authors/... operations
+                          //  authorize.requestMatchers("/books/**").hasAnyRole("USER","ADMIN"); // everyone can access wiht roles "USER" and "ADMIN" has long as they are logged in
 
 
                             authorize.anyRequest().authenticated(); // needs to be authenticated; last rule!!
