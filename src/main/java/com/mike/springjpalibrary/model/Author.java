@@ -45,8 +45,9 @@ public class Author implements Serializable {
     private LocalDateTime lastUpdateDate;
 
     //@CreatedBy
-    @Column(name = "id_user")
-    private UUID idUser;
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private User idUser;
 
     /**
      * Data Cadastro

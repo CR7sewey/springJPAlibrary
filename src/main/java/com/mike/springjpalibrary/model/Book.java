@@ -57,8 +57,9 @@ public class Book implements Serializable {
     private LocalDateTime lastUpdateDate;
 
     //@CreatedBy
-    @Column(name = "id_user")
-    private UUID idUser;
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private User idUser;
 
     @ManyToOne(fetch = FetchType.LAZY) // 1 author can have mutliple book - current table; fetch is EAGER by default
     @JoinColumn(name = "id_author", nullable = false)

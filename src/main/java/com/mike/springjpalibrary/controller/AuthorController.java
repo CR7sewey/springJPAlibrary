@@ -1,15 +1,22 @@
 package com.mike.springjpalibrary.controller;
 
 import com.mike.springjpalibrary.controller.Mappers.AuthorMapper;
+import com.mike.springjpalibrary.controller.Mappers.UserMapper;
 import com.mike.springjpalibrary.model.Author;
+import com.mike.springjpalibrary.model.User;
 import com.mike.springjpalibrary.model.dto.AuthorDTO;
+import com.mike.springjpalibrary.security.SecurityService;
 import com.mike.springjpalibrary.service.AuthorService;
+import com.mike.springjpalibrary.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -26,6 +33,8 @@ public class AuthorController implements GeneralisedController
 {
     private AuthorService authorService;
     private AuthorMapper authorMapper;
+    private UserService userService;
+    private SecurityService securityService;
 
     @Autowired
     public AuthorController(AuthorService authorService, AuthorMapper authorMapper) // bean gerenciado (service)
@@ -36,11 +45,19 @@ public class AuthorController implements GeneralisedController
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Object> saveAuthor(@RequestBody @Valid AuthorDTO authorDTO)
+    public ResponseEntity<Object> saveAuthor(@RequestBody @Valid AuthorDTO authorDTO)//, Authentication authentication)
     {
         //try {
         // Author - camada de persitencia; AuthorDTo - view
+
+        //User loggedUser = securityService.getLoggedUser();
         var author = authorMapper.authorDTOToAuthor(authorDTO);
+        //author.setIdUser(loggedUser.getId());
+
+        /*var user = (UserDetails) authentication.getPrincipal(); // UserDetail
+        User user1 = userService.getByUsername(user.getUsername());
+        var author = authorMapper.authorDTOToAuthor(authorDTO);
+        author.setIdUser(user1.getId());*/
         authorService.save(author);
         // ex: .../author -> .../author/1
         //URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(author.getId()).toUri(); // build new url with current one

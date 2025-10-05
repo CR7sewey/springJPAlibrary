@@ -3,11 +3,13 @@ package com.mike.springjpalibrary.controller;
 import com.mike.springjpalibrary.controller.Mappers.BooksMapper;
 import com.mike.springjpalibrary.model.Book;
 import com.mike.springjpalibrary.model.Genero;
+import com.mike.springjpalibrary.model.User;
 import com.mike.springjpalibrary.model.dto.AuthorDTO;
 import com.mike.springjpalibrary.model.dto.BookDTO;
 import com.mike.springjpalibrary.model.dto.RegisterBookDTO;
 import com.mike.springjpalibrary.repository.BookRepository;
 import com.mike.springjpalibrary.service.BookService;
+import com.mike.springjpalibrary.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -31,6 +35,7 @@ public class BookController implements GeneralisedController {
 
     private final BookService bookService;
     private final BooksMapper booksMappingClass;
+    private final UserService userService;
 
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("hasAnyRole('ADMIN', 'Admin', 'USER')")
@@ -102,9 +107,14 @@ public class BookController implements GeneralisedController {
 
     @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("hasAnyRole('ADMIN', 'Admin', 'USER')")
-    public ResponseEntity<Object> saveBook(@RequestBody @Valid RegisterBookDTO bookDTO) {
+    public ResponseEntity<Object> saveBook(@RequestBody @Valid RegisterBookDTO bookDTO)//, Authentication authentication)
+    {
         // try {
+
+        //var user = (UserDetails) authentication.getPrincipal(); // UserDetail
+       // User user1 = userService.getByUsername(user.getUsername());
         Book book = booksMappingClass.registerBook(bookDTO);
+       // book.setIdUser(user1.getId());
             /*book.setTitulo(bookDTO.title());
             book.setIsbn(bookDTO.isbn());
             book.setDataPublicacao(bookDTO.dataPublicacao());

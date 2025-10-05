@@ -4,6 +4,7 @@ import com.mike.springjpalibrary.exceptions.OperationNotAllowed;
 import com.mike.springjpalibrary.model.Author;
 import com.mike.springjpalibrary.repository.AuthorRepository;
 import com.mike.springjpalibrary.repository.BookRepository;
+import com.mike.springjpalibrary.security.SecurityService;
 import com.mike.springjpalibrary.validator.AuthorValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +25,13 @@ public class AuthorService implements IService<Author> {
     private final AuthorRepository authorRepository;
     private final AuthorValidator authorValidator;
     private final BookRepository bookRepository;
+    private final SecurityService securityService;
 
     @Override
     public Author save(Author author){
         System.out.println("Saving Author");
         authorValidator.validar(author);
+        author.setIdUser(securityService.getLoggedUser());
         return authorRepository.save(author);
     }
 

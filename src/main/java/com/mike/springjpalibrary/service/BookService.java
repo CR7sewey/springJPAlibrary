@@ -6,6 +6,7 @@ import com.mike.springjpalibrary.model.Genero;
 import com.mike.springjpalibrary.repository.AuthorRepository;
 import com.mike.springjpalibrary.repository.BookRepository;
 import com.mike.springjpalibrary.repository.BookSpecs;
+import com.mike.springjpalibrary.security.SecurityService;
 import com.mike.springjpalibrary.validator.BookValidator;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -26,11 +27,13 @@ public class BookService implements IService<Book> {
 
     private final BookRepository bookRepository;
     private final BookValidator bookValidator;
+    private final SecurityService  securityService;
 
 
     @Override
     public Book save(Book book) {
         bookValidator.validate(book);
+        book.setIdUser(securityService.getLoggedUser());
         return bookRepository.save(book);
     }
 

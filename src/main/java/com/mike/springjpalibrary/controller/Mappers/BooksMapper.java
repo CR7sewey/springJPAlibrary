@@ -5,6 +5,8 @@ import com.mike.springjpalibrary.model.Book;
 import com.mike.springjpalibrary.model.dto.BookDTO;
 import com.mike.springjpalibrary.model.dto.RegisterBookDTO;
 import com.mike.springjpalibrary.repository.AuthorRepository;
+import com.mike.springjpalibrary.repository.BookRepository;
+import com.mike.springjpalibrary.repository.UserRepository;
 import com.mike.springjpalibrary.service.AuthorService;
 import com.mike.springjpalibrary.service.BookService;
 import org.mapstruct.Mapper;
@@ -18,9 +20,12 @@ public abstract class BooksMapper {
     protected BookService bookService;
     @Autowired
     protected AuthorRepository authorRepository;
+    @Autowired
+    protected UserRepository userRepository;
 
     // bcs form iddUser in dto I need to pass the Author with taht id!
     @Mapping(target = "author", expression = "java( authorRepository.findById(registerBookDTO.idUser()).orElse(null) )")
+    @Mapping(target = "idUser", expression = "java( userRepository.findById(registerBookDTO.idUser()).orElse(null) )") // replace later by
     //@Mapping(target = "titulo", source = "registerBookDTO.title")
     public abstract Book registerBook(RegisterBookDTO registerBookDTO);
 
