@@ -28,7 +28,8 @@ public class SecurityConfiguration {
 
         return http
                 .csrf(AbstractHttpConfigurer::disable) // sem disable - protecao para fazer requisicoes pelas paginas auotrizadas (token)
-                .formLogin(configurer -> configurer.loginPage("/login").permitAll()) //(Customizer.withDefaults()) // habilita via login forms; configurer -> configurer.loginPage("/login.html").successForwardUrl("/home.html")
+                //.formLogin(configurer -> configurer.loginPage("/login").permitAll()) //(Customizer.withDefaults()) // habilita via login forms; configurer -> configurer.loginPage("/login.html").successForwardUrl("/home.html")
+                .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults()) // habilita via http basic; https://www.debugbear.com/basic-auth-header-generator
                 .authorizeHttpRequests(authorize -> {
                             authorize.requestMatchers("/login").permitAll();
@@ -44,6 +45,7 @@ public class SecurityConfiguration {
 
                         }
                 ) // any requisition needs to be with authentication
+                .oauth2Login(Customizer.withDefaults())
                 .build();
 
     }

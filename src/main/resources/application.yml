@@ -16,7 +16,13 @@ spring:
     url: jdbc:postgresql://localhost:5432/library
     username: postgres
     password:
-
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId:
+            clientSecret:
 
 
 server:
