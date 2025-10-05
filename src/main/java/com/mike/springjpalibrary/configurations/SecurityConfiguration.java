@@ -1,5 +1,6 @@
 package com.mike.springjpalibrary.configurations;
 
+import com.mike.springjpalibrary.security.CustomAuthenticationProvider;
 import com.mike.springjpalibrary.security.CustomUserDetailsService;
 import com.mike.springjpalibrary.service.UserService;
 import org.springframework.context.annotation.Bean;
@@ -10,12 +11,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -54,11 +53,23 @@ public class SecurityConfiguration {
     public PasswordEncoder passwordEncoder() { // password wincoder interface
         return new BCryptPasswordEncoder(10);
     }
-
+/*
     @Bean
     public UserDetailsService userDetailsService(UserService userService) {
         return new CustomUserDetailsService(userService);
+    }*/
+
+    @Bean // override the authtentication provider for acceptance of oauth2 (bcs the object returned is no in a UserDetails form
+    public CustomAuthenticationProvider authenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
+        return new CustomAuthenticationProvider(userService, passwordEncoder);
     }
+
+    @Bean // to add the prefix when accessing the users roles; by default, uses ROLE_ (since I overwrite the Authentication Provider, this needs to be handled
+    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults("");
+    }
+
+
 
     /*
     @Bean                                                   //

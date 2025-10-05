@@ -14,7 +14,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
 
-    @Override
+    @Override // user details that provides authentication!
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var user = userService.getByUsername(username);
         if (user == null) {
