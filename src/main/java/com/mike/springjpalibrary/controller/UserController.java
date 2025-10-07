@@ -9,12 +9,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -31,6 +32,22 @@ public class UserController implements GeneralisedController {
         userService.save(user);
         URI uri = generateURI(user.getId());
         return ResponseEntity.status(HttpStatus.CREATED).location(uri).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        var users = userService.getUsers();
+        var usersDTO = users.stream().map(userMapper::userToUserDTO).toList();
+        return ResponseEntity.ok(usersDTO);
+    }
+
+    @DeleteMapping("{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
+        userService.deleteByUsername(username);
+        return ResponseEntity.noContent().build();
+
     }
 
 }

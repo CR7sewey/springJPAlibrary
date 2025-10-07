@@ -1,6 +1,7 @@
 package com.mike.springjpalibrary.service;
 
 import com.mike.springjpalibrary.model.User;
+import com.mike.springjpalibrary.model.dto.UserDTO;
 import com.mike.springjpalibrary.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,14 @@ public class UserService {
 
     public Optional<User> getByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public List<User> getUsers() {
+        return userRepository.findAll();
+    }
+
+    public void deleteByUsername(String username) {
+        userRepository.deleteByUsername(username);
     }
 
 
