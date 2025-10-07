@@ -15,14 +15,14 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/library
     username: postgres
-    password:
+    password: ${DB_PASSWORD}
   security:
     oauth2:
       client:
         registration:
           google:
-            clientId:
-            clientSecret:
+            clientId: ${GOOGLE_CLIENT_ID}
+            clientSecret: ${GOOGLE_CLIENT_SECRET}
 
 
 server:
