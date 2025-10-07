@@ -2,6 +2,7 @@ package com.mike.springjpalibrary.model;
 
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,6 +26,9 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Column(unique = true, nullable = false, length = 150)
+    private String email;
 
     @Column(nullable = false, unique = true, length = 20)
     private String username;

@@ -5,6 +5,7 @@ import com.mike.springjpalibrary.model.User;
 import com.mike.springjpalibrary.model.dto.UserDTO;
 import com.mike.springjpalibrary.repository.UserRepository;
 import com.mike.springjpalibrary.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class UserController implements GeneralisedController {
     private final UserMapper userMapper;
 
     @PostMapping
-    public ResponseEntity<Void> addUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Void> addUser(@RequestBody @Valid UserDTO userDTO) {
 
         var user = userMapper.userDTOToUser(userDTO);
         userService.save(user);

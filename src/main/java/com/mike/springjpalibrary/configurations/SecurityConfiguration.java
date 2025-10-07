@@ -2,6 +2,7 @@ package com.mike.springjpalibrary.configurations;
 
 import com.mike.springjpalibrary.security.CustomAuthenticationProvider;
 import com.mike.springjpalibrary.security.CustomUserDetailsService;
+import com.mike.springjpalibrary.security.LoginSocialSuccessHandler;
 import com.mike.springjpalibrary.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
     @Bean  // http security parte do contexto do spring security; vai subscrever o security filter padrao
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler loginSocialSuccessHandler) throws Exception {
 
         return http
                 .csrf(AbstractHttpConfigurer::disable) // sem disable - protecao para fazer requisicoes pelas paginas auotrizadas (token)
@@ -44,7 +45,9 @@ public class SecurityConfiguration {
 
                         }
                 ) // any requisition needs to be with authentication
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(oauth2 -> oauth2.successHandler(
+                        loginSocialSuccessHandler
+                ))
                 .build();
 
     }
