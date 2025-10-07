@@ -45,3 +45,6 @@ A solução é a seguinte: criar uma implementação de SavedRequestAwareAuthent
 pois isso é lidado pela API do google, mas sim em caso de sucesso, pegar na authentication retornada, pegar num parametro, no caso o email, 
 e ir buscar o meu user, e assim retornar a minha authentication customizada. Para isos, tmb no SecurityFilterChain das configuracoes do Security,
 tenho de passar esta impl. Feito em LoginSocialSuccessHandler!
+
+<img width="615" height="407" alt="Screenshot 2025-10-07 155201" src="https://github.com/user-attachments/assets/d1a08b23-e0fe-4678-8f63-f3853032582a" />
+
