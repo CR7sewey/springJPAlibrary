@@ -1,5 +1,12 @@
 package com.mike.springjpalibrary.configurations;
 
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -8,6 +15,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtDecoders;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
@@ -15,8 +25,13 @@ import org.springframework.security.oauth2.server.authorization.settings.OAuth2T
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.UUID;
 
 @Configuration
 @EnableWebSecurity
@@ -27,9 +42,7 @@ public class AuthorizationServerConfiguration {
     public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception {
 
         // habilitaar AuthorizationServer
-
-        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
-                OAuth2AuthorizationServerConfigurer.authorizationServer();
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .oidc(Customizer.withDefaults()); // infos do token para front
@@ -56,10 +69,10 @@ public class AuthorizationServerConfiguration {
         settings.put("access_token_format", OAuth2TokenFormat.SELF_CONTAINED);
 
         return TokenSettings
-                .withSettings(settings)
-                //.builder
-                //.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
-                //.accessTokenTimeToLive(Duration.ofMinutes(60))
+                //.withSettings(settings)
+                .builder()
+                .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+                .accessTokenTimeToLive(Duration.ofMinutes(60))
                 .build();
     }
 
@@ -69,6 +82,34 @@ public class AuthorizationServerConfiguration {
                 .builder()
                 .requireAuthorizationConsent(false) // nao precisa do consentimento para autorizar infos
                 .build();
+    }
+
+    // gerar token jwk -token signature
+    @Bean
+    public JWKSource<SecurityContext> jwkSource() throws Exception {
+        RSAKey rsaKey = generateRSA();
+        JWKSet jwkSet = new JWKSet(rsaKey);
+        return new ImmutableJWKSet<>(jwkSet);
+    }
+
+
+    // criptografia de chave (chave pub (criptografar dados) e private (desencriptar dados))
+    private RSAKey generateRSA() throws Exception {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(2048); // btis
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+        RSAPublicKey rsaPublicKey = (RSAPublicKey) keyPair.getPublic();
+        RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
+
+        return new RSAKey.Builder(
+                rsaPublicKey
+        ).privateKey(rsaPrivateKey).keyID(UUID.randomUUID().toString()).build();
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
+        return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }
 
 
