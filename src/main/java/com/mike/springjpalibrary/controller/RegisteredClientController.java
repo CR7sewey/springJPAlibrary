@@ -1,22 +1,20 @@
 package com.mike.springjpalibrary.controller;
 
 import com.mike.springjpalibrary.model.RegisteredClient;
-import com.mike.springjpalibrary.service.RegisteredClientService;
+import com.mike.springjpalibrary.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/clients")
 @RequiredArgsConstructor
 public class RegisteredClientController implements GeneralisedController {
 
-    private final RegisteredClientService clientService;
+    private final ClientService clientService;
 
 
     @GetMapping("/{clientId}")

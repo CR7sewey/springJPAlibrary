@@ -2,18 +2,16 @@ package com.mike.springjpalibrary.service;
 
 import com.mike.springjpalibrary.exceptions.DuplicateRegister;
 import com.mike.springjpalibrary.model.RegisteredClient;
-import com.mike.springjpalibrary.repository.RegisteredClientRepository;
+import com.mike.springjpalibrary.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
-public class RegisteredClientService {
+public class ClientService {
 
-    private final RegisteredClientRepository clientRepository;
+    private final ClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
 
     public RegisteredClient findByClientId(String clientId) {

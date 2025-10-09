@@ -1,8 +1,10 @@
 package com.mike.springjpalibrary.configurations;
 
+import com.mike.springjpalibrary.authorizationServer.CustomRegisteredClientRepository;
 import com.mike.springjpalibrary.security.CustomAuthenticationProvider;
 import com.mike.springjpalibrary.security.CustomUserDetailsService;
 import com.mike.springjpalibrary.security.LoginSocialSuccessHandler;
+import com.mike.springjpalibrary.service.ClientService;
 import com.mike.springjpalibrary.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -120,5 +122,9 @@ public class SecurityConfiguration {
         List<RegisteredClient> registrations = ...
         return new InMemoryRegisteredClientRepository(registrations);
     } */
+    @Bean
+    public RegisteredClientRepository registeredClientRepository(ClientService clientService) {
+        return new CustomRegisteredClientRepository(clientService);
+    }
 
 }
