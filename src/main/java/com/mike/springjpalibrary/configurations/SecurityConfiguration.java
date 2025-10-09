@@ -14,12 +14,14 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true) // to make authorization in controllers
-public class SecurityConfiguration {
+public class SecurityConfiguration { // ResourceServer
 
     @Bean  // http security parte do contexto do spring security; vai subscrever o security filter padrao
     public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler loginSocialSuccessHandler) throws Exception {
@@ -51,14 +53,14 @@ public class SecurityConfiguration {
                 /*.with(authorizationServerConfigurer, (authorizationServer) -> authorizationServer.registeredClientRepository(
                         new InMemoryRegisteredClientRepository()
                 ) )*/
+                .oauth2ResourceServer(oauth2Resource -> {
+                    oauth2Resource.jwt(Customizer.withDefaults()); // config padrao do jwt
+                })
                 .build();
 
     }
 
-    @Bean //
-    public PasswordEncoder passwordEncoder() { // password wincoder interface
-        return new BCryptPasswordEncoder(10);
-    }
+
 /*
     @Bean
     public UserDetailsService userDetailsService(UserService userService) {
@@ -70,11 +72,22 @@ public class SecurityConfiguration {
         return new CustomAuthenticationProvider(userService, passwordEncoder);
     }
 
+    // configura o prefixo ROLE nas authorities
     @Bean // to add the prefix when accessing the users roles; by default, uses ROLE_ (since I overwrite the Authentication Provider, this needs to be handled
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults("");
     }
 
+    // configura no token jwt o prefixo SCOPE
+    @Bean // tal como para as autorities, ele vai vir como SCOPE_ (prefixo); entao tenho de configurar para nao ler o prefixo
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        var authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        authoritiesConverter.setAuthorityPrefix("");
+
+        var converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+        return converter;
+    }
 
 
     /*
