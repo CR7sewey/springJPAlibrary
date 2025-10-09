@@ -16,7 +16,13 @@ import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -25,7 +31,8 @@ public class SecurityConfiguration {
 
     @Bean  // http security parte do contexto do spring security; vai subscrever o security filter padrao
     public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler loginSocialSuccessHandler) throws Exception {
-
+        //OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
+        //        OAuth2AuthorizationServerConfigurer.authorizationServer();
         return http
                 .csrf(AbstractHttpConfigurer::disable) // sem disable - protecao para fazer requisicoes pelas paginas auotrizadas (token)
                 .formLogin(configurer -> configurer.loginPage("/login").permitAll()) //(Customizer.withDefaults()) // habilita via login forms; configurer -> configurer.loginPage("/login.html").successForwardUrl("/home.html")
@@ -48,6 +55,10 @@ public class SecurityConfiguration {
                 .oauth2Login(oauth2 -> oauth2.successHandler(
                         loginSocialSuccessHandler
                 ).loginPage("/login"))
+                //.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
+                /*.with(authorizationServerConfigurer, (authorizationServer) -> authorizationServer.registeredClientRepository(
+                        new InMemoryRegisteredClientRepository()
+                ) )*/
                 .build();
 
     }
@@ -100,5 +111,14 @@ public class SecurityConfiguration {
     }
 
      */
+
+
+    // OAUTHIMPL
+    /*
+    @Bean
+    public RegisteredClientRepository registeredClientRepository() {
+        List<RegisteredClient> registrations = ...
+        return new InMemoryRegisteredClientRepository(registrations);
+    } */
 
 }
