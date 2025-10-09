@@ -1,18 +1,16 @@
-package com.mike.springjpalibrary.authorizationServer;
+package com.mike.springjpalibrary.security;
 
-import com.mike.springjpalibrary.repository.ClientRepository;
 import com.mike.springjpalibrary.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
-//@Component - se ativo nao o tinha de passar no security pq estava no contexto do spring ja, entao ja achava o Registered client
+@Component // - se ativo nao o tinha de passar no security pq estava no contexto do spring ja, entao ja achava o Registered client
 @RequiredArgsConstructor
 public class CustomRegisteredClientRepository implements RegisteredClientRepository {
 // authorization server validar se esta registado e foi passada a credencial correta
@@ -24,6 +22,8 @@ The provided implementations of RegisteredClientRepository are InMemoryRegistere
 The InMemoryRegisteredClientRepository implementation stores RegisteredClient instances in-memory and is recommended ONLY to be used during development and testing. JdbcRegisteredClientRepository is a JDBC implementation that persists RegisteredClient instances by using JdbcOperations.
  */
     private final ClientService  clientService;
+    private final TokenSettings  tokenSettings;
+    private final ClientSettings clientSettings;
 
     @Override
     public void save(RegisteredClient registeredClient) {
@@ -48,8 +48,8 @@ The InMemoryRegisteredClientRepository implementation stores RegisteredClient in
                     .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC) // passamos a info na Basic Auth, se Post podemos passar via header
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE) // tipo de grant type (ver esquema ReadMe)
                     .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-          //          .tokenSettings()
-          //          .clientSettings()
+                    .tokenSettings(tokenSettings)
+                    .clientSettings(clientSettings)
                     .build();
         }
         return null;
