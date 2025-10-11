@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
@@ -114,6 +115,20 @@ public class AuthorizationServerConfiguration {
     @Bean
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
+    }
+
+    @Bean
+    public AuthorizationServerSettings authorizationServerSettings() {
+        return AuthorizationServerSettings
+                .builder()
+                .tokenEndpoint("/oauth2/token") // url to get a token
+                .tokenIntrospectionEndpoint("/oauth2/token_introspection") // info about the token (Bearer ${token}) via header
+                .tokenRevocationEndpoint("/oauth2/token_revocation") // revogar o token - POST
+                .authorizationEndpoint("/oauth2/authorize") // to get the authorization code (authorization server) - reencaminha oara form login
+                .oidcUserInfoEndpoint("oauth2/userinfo") // info do user OPEN ID CONNECT - to be implemented
+                .jwkSetEndpoint("/oauth2/jwks") // get public keys to validate token signature
+                .oidcLogoutEndpoint("/oauth2/logout") // logout
+                .build();
     }
 
 
