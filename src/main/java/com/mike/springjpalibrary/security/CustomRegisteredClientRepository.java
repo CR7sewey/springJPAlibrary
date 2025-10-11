@@ -48,6 +48,7 @@ The InMemoryRegisteredClientRepository implementation stores RegisteredClient in
                     .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC) // passamos a info na Basic Auth, se Post podemos passar via header
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE) // tipo de grant type (ver esquema ReadMe)
                     .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN) // used with authorization_code ou login com user e senha
                     .tokenSettings(tokenSettings)
                     .clientSettings(clientSettings)
                     .build();

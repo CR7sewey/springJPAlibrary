@@ -71,8 +71,12 @@ public class AuthorizationServerConfiguration {
         return TokenSettings
                 //.withSettings(settings)
                 .builder()
+                // access_token: used token to perform requisitions - jwt token
                 .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
                 .accessTokenTimeToLive(Duration.ofMinutes(60))
+                // refresh_token: used to renovate the access_token - opaco token
+                .reuseRefreshTokens(true)
+                .refreshTokenTimeToLive(Duration.ofMinutes(90))
                 .build();
     }
 

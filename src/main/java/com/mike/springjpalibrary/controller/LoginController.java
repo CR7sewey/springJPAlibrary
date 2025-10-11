@@ -21,5 +21,12 @@ public class LoginController {
         return "Hello " + authentication.getName();
     }
 
+    @GetMapping("/authorized")
+    @ResponseBody
+    public String authorizedPage(@RequestParam String code) {
+        return "Authorization code: " + code; // response to get code in response body after login (utils)
+
+    }
+
 
 }
