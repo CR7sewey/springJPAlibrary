@@ -24,7 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true) // to make authorization in controllers
-public class SecurityConfiguration { // ResourceServer
+public class SecurityConfiguration { // ResourceServer - recebe o token e authentificacao
 
     @Bean  // http security parte do contexto do spring security; vai subscrever o security filter padrao
     public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler loginSocialSuccessHandler, JwtCustomAuthenticationFilter jwtCustomAuthenticationFilter) throws Exception {
