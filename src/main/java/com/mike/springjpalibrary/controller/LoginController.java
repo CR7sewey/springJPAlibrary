@@ -1,6 +1,7 @@
 package com.mike.springjpalibrary.controller;
 
 import com.mike.springjpalibrary.security.CustomAuthentication;
+import com.nimbusds.oauth2.sdk.auth.JWTAuthentication;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,10 @@ public class LoginController {
     @GetMapping("/")
     @ResponseBody
     public String homePage(Authentication authentication) {
+        /* if authentication through authorization code (grant type)
+           the type of authentication will be JWTauthentication, so we need to
+            convert into custom authentication
+         */
         if (authentication instanceof CustomAuthentication customAuthentication)
             System.out.println(customAuthentication);
         return "Hello " + authentication.getName();

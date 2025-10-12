@@ -23,7 +23,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString(); // could be digital, facial password, not only digited!
         System.out.println(username + " is authenticated " + password);
         //String encodedPassword = passwordEncoder.encode(password);
-
+        System.out.println(authentication); // null in the first part (before token)
         // validate if username + password check in database
         var userFound = userService.getByUsername(username);
         System.out.println(passwordEncoder.matches(password,userFound.getPassword()));

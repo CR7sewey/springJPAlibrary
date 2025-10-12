@@ -1,6 +1,7 @@
 package com.mike.springjpalibrary.configurations;
 
 import com.mike.springjpalibrary.security.CustomAuthenticationProvider;
+import com.mike.springjpalibrary.security.JwtCustomAuthenticationFilter;
 import com.mike.springjpalibrary.security.LoginSocialSuccessHandler;
 import com.mike.springjpalibrary.service.UserService;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.OAuth2ResourceServerDsl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -24,7 +27,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration { // ResourceServer
 
     @Bean  // http security parte do contexto do spring security; vai subscrever o security filter padrao
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler loginSocialSuccessHandler) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler loginSocialSuccessHandler, JwtCustomAuthenticationFilter jwtCustomAuthenticationFilter) throws Exception {
         //OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
         //        OAuth2AuthorizationServerConfigurer.authorizationServer();
         return http
@@ -56,6 +59,9 @@ public class SecurityConfiguration { // ResourceServer
                 .oauth2ResourceServer(oauth2Resource -> {
                     oauth2Resource.jwt(Customizer.withDefaults()); // config padrao do jwt
                 })
+                // to execute after oauth2 login (pq o resource server é quem recebe o token e autentica o user -> assim gera o obj authentication)
+                // o BearerToken... é o filtro que recebe o token e faz a verificação, isto é decodifica e faz a authentication (object) - quando token mandando na requisicao (após já ter sido amndando pelo authorization server)
+                .addFilterAfter(jwtCustomAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                 .build();
 
     }
