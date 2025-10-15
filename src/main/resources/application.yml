@@ -1,6 +1,9 @@
 spring:
   application:
     name: springJPAlibrary
+  output:
+    ansi:
+      enabled: always
   jpa:
     open-in-view: true
     hibernate:
@@ -31,3 +34,23 @@ server:
 
 springdoc:
   override-with-generic-response: false # disabilita respostas genericas
+logging:
+  file:
+    name: app.log
+  level:
+    root: warn # all the app; trace (more detailed), debug, info, warn, error
+    com:
+      mike:
+        springjpalibrary: trace
+    org:
+      springframework:
+        web: debug
+
+management: # actuator - metrics application
+  server:
+    port: 9090
+  endpoints:
+    web:
+      exposure:
+        include: '*' # all
+

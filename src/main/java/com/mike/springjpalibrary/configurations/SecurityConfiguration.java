@@ -83,7 +83,8 @@ public class SecurityConfiguration { // ResourceServer - recebe o token e authen
                     "/swagger-resources/**",
                     "/swagger-ui.html",
                     "/swagger-ui/**",
-                    "/webjars/**"
+                    "/webjars/**",
+                    "/actuator/**"
             );
     }
 

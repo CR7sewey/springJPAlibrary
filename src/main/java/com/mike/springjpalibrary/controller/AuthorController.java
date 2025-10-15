@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Slf4j
+@Slf4j // log
 @RestController
 @RequestMapping("/authors")
 @Tag(name = "Authors") // swagger
@@ -71,6 +71,7 @@ public class AuthorController implements GeneralisedController
         var author = authorMapper.authorDTOToAuthor(authorDTO);
         author.setIdUser(user1.getId());*/
         authorService.save(author);
+        log.info("Author saved: {}", author.getNome());
         // ex: .../author -> .../author/1
         //URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(author.getId()).toUri(); // build new url with current one
         URI uri = generateURI(author.getId());
@@ -178,6 +179,10 @@ public class AuthorController implements GeneralisedController
     })
     public ResponseEntity<List<AuthorDTO>> findByNameOrNationality(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "birthDate", required = false) LocalDate birthDate, @RequestParam(value = "nationality", required = false) String nationality)
     {
+        log.trace("findByNameOrNationality");
+        log.debug("findByNameOrNationality");
+        log.info("findByNameOrNationality");
+        log.warn("findByNameOrNationality");
         var authors = authorService.findByExample(name, birthDate, nationality);
         List<AuthorDTO> authorDTOs = authors.stream().map(authorMapper::authorToAuthorDTO
         ).toList();
