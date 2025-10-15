@@ -8,6 +8,10 @@ import com.mike.springjpalibrary.model.dto.AuthorDTO;
 import com.mike.springjpalibrary.security.SecurityService;
 import com.mike.springjpalibrary.service.AuthorService;
 import com.mike.springjpalibrary.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/authors")
+@Tag(name = "Authors") // swagger
 //@RequiredArgsConstructor - dependency injection without constructor set by us
 public class AuthorController implements GeneralisedController
 {
@@ -45,6 +50,13 @@ public class AuthorController implements GeneralisedController
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Save Author") // swagger
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Author saved"),
+            @ApiResponse(responseCode = "422", description = "Validation error"),
+            @ApiResponse(responseCode = "409", description = "Author already registered"),
+
+    })
     public ResponseEntity<Object> saveAuthor(@RequestBody @Valid AuthorDTO authorDTO)//, Authentication authentication)
     {
         //try {
@@ -93,6 +105,11 @@ public class AuthorController implements GeneralisedController
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'Admin', 'USER')")
+    @Operation(summary = "Find Author") // swagger
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Author found"),
+            @ApiResponse(responseCode = "404", description = "Author not found"),
+    })
     public ResponseEntity<AuthorDTO> findById(@PathVariable String id)
     {
         var uuid = UUID.fromString(id);
@@ -121,6 +138,13 @@ public class AuthorController implements GeneralisedController
     // idempotente - mesmo retorno independentemente da repsota (not cool)
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Delete Author") // swagger
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Author deleted"),
+            @ApiResponse(responseCode = "404", description = "Author not found"),
+            @ApiResponse(responseCode = "400", description = "Author cannot be deleted - book registered"),
+
+    })
     public ResponseEntity<Object> deleteById(@PathVariable String id)
     {
         // try {
@@ -148,6 +172,10 @@ public class AuthorController implements GeneralisedController
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'Admin', 'USER')")
+    @Operation(summary = "Search Author") // swagger
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Authors found"),
+    })
     public ResponseEntity<List<AuthorDTO>> findByNameOrNationality(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "birthDate", required = false) LocalDate birthDate, @RequestParam(value = "nationality", required = false) String nationality)
     {
         var authors = authorService.findByExample(name, birthDate, nationality);
@@ -165,6 +193,13 @@ public class AuthorController implements GeneralisedController
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Update Author") // swagger
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Author updated"),
+            @ApiResponse(responseCode = "404", description = "Author not found"),
+            @ApiResponse(responseCode = "409", description = "Author already registered"),
+
+    })
     public ResponseEntity<Object> updateAuthor(@PathVariable String id, @RequestBody @Valid AuthorDTO authorDTO)
     {
         //  try {

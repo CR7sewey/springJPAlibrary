@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.OAuth2ResourceServerDsl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,7 +35,7 @@ public class SecurityConfiguration { // ResourceServer - recebe o token e authen
                 .csrf(AbstractHttpConfigurer::disable) // sem disable - protecao para fazer requisicoes pelas paginas auotrizadas (token)
                 .formLogin(configurer -> configurer.loginPage("/login").permitAll()) //(Customizer.withDefaults()) // habilita via login forms; configurer -> configurer.loginPage("/login.html").successForwardUrl("/home.html")
                // .formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults()) // habilita via http basic; https://www.debugbear.com/basic-auth-header-generator
+               // .httpBasic(Customizer.withDefaults()) // habilita via http basic; https://www.debugbear.com/basic-auth-header-generator
                 .authorizeHttpRequests(authorize -> {
                             authorize.requestMatchers("/login").permitAll();
                             authorize.requestMatchers(HttpMethod.POST,"/users/**").permitAll();
@@ -72,6 +73,19 @@ public class SecurityConfiguration { // ResourceServer - recebe o token e authen
     public UserDetailsService userDetailsService(UserService userService) {
         return new CustomUserDetailsService(userService);
     }*/
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() { // salta filtro de segurança
+        return web ->
+            web.ignoring().requestMatchers(
+                    "/v2/api-docs/**",
+                    "/v3/api-docs/**",
+                    "/swagger-resources/**",
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/webjars/**"
+            );
+    }
 
     @Bean // override the authtentication provider for acceptance of oauth2 (bcs the object returned is no in a UserDetails form
     public CustomAuthenticationProvider authenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {

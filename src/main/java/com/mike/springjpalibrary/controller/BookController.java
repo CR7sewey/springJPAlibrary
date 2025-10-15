@@ -10,6 +10,7 @@ import com.mike.springjpalibrary.model.dto.RegisterBookDTO;
 import com.mike.springjpalibrary.repository.BookRepository;
 import com.mike.springjpalibrary.service.BookService;
 import com.mike.springjpalibrary.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
+@Tag(name = "Books")
 public class BookController implements GeneralisedController {
 
     private final BookService bookService;
