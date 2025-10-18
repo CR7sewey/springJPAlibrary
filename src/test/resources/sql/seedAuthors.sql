@@ -1,0 +1,3 @@
+INSERT INTO tb_author (id, nome, nationality, birth_date) values ('91b5cdf9-2705-4b5e-8acd-62c732d4a96e','Miguel', 'Portuguese', '2025-01-01');
+INSERT INTO tb_author (id, nome, nationality, birth_date) values ('290c883e-831f-4ae1-acf8-64902477c3ee','Ricardo', 'Portuguese', '2025-01-01');
+INSERT INTO tb_author (id, nome, nationality, birth_date) values ('23bfcd0e-1064-4758-a77c-a5e9c1fdffdb','Ricardo', 'Portuguese', '2025-01-01');
