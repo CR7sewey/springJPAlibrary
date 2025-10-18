@@ -16,7 +16,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class BookRepositoryTest {
+class BookRepositoryTest2 {
 
     @Autowired
     BookRepository bookRepository;

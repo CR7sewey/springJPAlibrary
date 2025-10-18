@@ -63,6 +63,9 @@ public class Author implements Serializable {
     public Author() {}
 
     public Author(UUID id, String nome, LocalDate birthDate, String nationality) {
+        if (nome.isEmpty()) {
+            throw new IllegalArgumentException("Should not be empty.");
+        }
         this.id = id;
         this.nome = nome;
         this.birthDate = birthDate;
@@ -100,6 +103,17 @@ public class Author implements Serializable {
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }*/
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Author author = (Author) o;
+        return ((Author) o).getNome().equals(this.getNome()) &&
+                ((Author) o).getNationality().equals(this.getNationality()) &&
+                ((Author) o).getBirthDate().equals(this.getBirthDate())
+                ;
+    }
 
     @Override
     public String toString() {

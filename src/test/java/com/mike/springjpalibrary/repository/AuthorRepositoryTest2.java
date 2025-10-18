@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
-public class AuthorRepositoryTest {
+public class AuthorRepositoryTest2 {
 
     @Autowired
     private AuthorRepository authorRepository;
