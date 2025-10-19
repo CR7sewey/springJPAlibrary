@@ -26,7 +26,7 @@ public class AuthorValidator {
         this.authorRepository = authorRepository;
     }
 
-    public void validar(Author author) {
+    public boolean validar(Author author) {
         System.out.println("Validating Author");
         if (validateDuplicateRegister(author)) {
             System.out.println("DUPLICATE REGISTER");
@@ -42,6 +42,7 @@ public class AuthorValidator {
             throw fieldValidator;
 
         }*/
+        return true; // just to help on test implementation - could be void
     }
 
 
