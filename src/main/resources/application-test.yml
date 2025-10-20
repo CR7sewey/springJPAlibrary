@@ -1,4 +1,7 @@
 spring:
+  security:
+    basic:
+      enabled: false
   jpa:
     open-in-view: true
     hibernate:
